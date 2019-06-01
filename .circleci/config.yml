@@ -11,7 +11,7 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "composer.lock" }}
             - v1-dependencies-
-      - run: apk add --no-cache --update --virtual buildDeps g++ make autoconf composer
+      - run: apk add --no-cache --update --virtual buildDeps g++ make autoconf composer bash curl
       - run: pecl install redis xdebug && docker-php-ext-enable redis xdebug
       - run: composer install -n --prefer-dist
       - save_cache:
