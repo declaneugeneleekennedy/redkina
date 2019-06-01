@@ -19,3 +19,5 @@ jobs:
           paths:
             - ./vendor
       - run: ./vendor/bin/phpunit --coverage-clover coverage.xml test/unit
+      - codecov/upload:
+          file: ./coverage.xml
