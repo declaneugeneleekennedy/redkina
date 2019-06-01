@@ -18,4 +18,4 @@ jobs:
           key: v1-dependencies-{{ checksum "composer.lock" }}
           paths:
             - ./vendor
-      - run: ./vendor/bin/phpunit test/unit
+      - run: ./vendor/bin/phpunit --coverage-clover coverage.xml test/unit
