@@ -3,7 +3,7 @@
 namespace DevDeclan\Test\Support\Redkina\Entity\Person;
 
 use DevDeclan\Test\Support\Redkina\Entity\Person;
-use DevDeclan\Redkina\Annotations as Redkina;
+use DevDeclan\Redkina\Annotation as Redkina;
 
 /**
  * @package DevDeclan\Test\Support\Redkina\Entity\Person
@@ -28,7 +28,7 @@ class WithNickname extends Person
     }
 
     /**
-     * @param string $nickname
+     * @param  string $nickname
      * @return WithNickname
      */
     public function setNickname(string $nickname): WithNickname

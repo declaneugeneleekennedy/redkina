@@ -16,5 +16,6 @@ jobs:
           key: v1-dependencies-{{ checksum "composer.lock" }}
           paths:
             - ./vendor
-      - run: ./vendor/bin/phpunit --coverage-clover coverage.xml test/unit
+      - run: composer lint
+      - run: composer coverage-xml
       - run: bash -c 'bash <(curl -s https://codecov.io/bash) -f ./coverage.xml -n ${CIRCLE_BUILD_NUM} -t ${CODECOV_TOKEN} -y .codecov.yml'

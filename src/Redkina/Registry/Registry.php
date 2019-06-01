@@ -2,187 +2,118 @@
 
 namespace DevDeclan\Redkina\Registry;
 
-use DevDeclan\Redkina\Annotations\Entity;
+use DevDeclan\Redkina\ClassLoader;
+use DevDeclan\Redkina\Metadata\Entity as EntityMetadata;
+use DevDeclan\Redkina\MetadataExtractor;
 use DevDeclan\Redkina\RegistryInterface;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\Reader;
-use Go\ParserReflection\ReflectionFile;
-use DirectoryIterator;
 use ReflectionClass;
+use ReflectionException;
 
 class Registry implements RegistryInterface
 {
     /**
-     * @var string
+     * @var ClassLoader
      */
-    protected $entityPath;
+    protected $classLoader;
 
     /**
-     * @var Reader
+     * @var MetadataExtractor
      */
-    protected $annotationReader;
+    protected $metadataExtractor;
 
     /**
      * @var array
      */
-    protected $types = [];
+    protected $entities = [];
 
     /**
-     * @param string $entityPath
-     * @param Reader|null $annotationReader
+     * @var array
      */
-    public function __construct(string $entityPath, ? Reader $annotationReader = null)
+    protected $classes = [];
+
+    /**
+     * @param ClassLoader       $classLoader
+     * @param MetadataExtractor $metadataExtractor
+     */
+    public function __construct(ClassLoader $classLoader, MetadataExtractor $metadataExtractor)
     {
-        $this->entityPath = $entityPath;
-        $this->annotationReader = $annotationReader;
+        $this->classLoader = $classLoader;
+        $this->metadataExtractor = $metadataExtractor;
     }
 
     /**
-     * @throws \Doctrine\Common\Annotations\AnnotationException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function initialise(): void
     {
-        if (is_null($this->annotationReader)) {
-            $this->annotationReader = new AnnotationReader();
-        }
+        $classes = $this->classLoader->getClasses();
 
-        $entities = $this->getClassesInDirectory($this->entityPath);
+        foreach ($classes as $class) {
+            $reflected = new ReflectionClass($class);
+            $metadata = $this->metadataExtractor->extract($reflected);
 
-        foreach ($entities as $className) {
-            $this->processClassName($className);
+            if (is_null($metadata)) {
+                continue;
+            }
+
+            $this->registerEntity($metadata->getName(), $metadata);
+            $this->registerClass($reflected->getName(), $metadata);
         }
     }
 
     /**
-     * @param string $name
-     * @param string $className
+     * @param  string         $entityName
+     * @param  EntityMetadata $metadata
      * @return Registry
      */
-    public function addType(string $name, string $className): self
+    public function registerEntity(string $entityName, EntityMetadata $metadata): self
     {
-        $this->types[$name] = $className;
+        $this->entities[$entityName] = $metadata;
 
         return $this;
     }
 
     /**
-     * @param string $name
+     * @param  string         $className
+     * @param  EntityMetadata $metadata
+     * @return Registry
+     */
+    public function registerClass(string $className, EntityMetadata $metadata): self
+    {
+        $this->classes[$className] = $metadata;
+
+        return $this;
+    }
+
+    public function getClassMetadata(string $className): ? EntityMetadata
+    {
+        return $this->classes[$className] ?? null;
+    }
+
+    public function getEntityMetadata(string $entityName): ? EntityMetadata
+    {
+        return $this->entities[$entityName] ?? null;
+    }
+
+    /**
+     * @param  string $entityName
      * @return string|null
      */
-    public function getClassName(string $name): ? string
+    public function getClassName(string $entityName): ? string
     {
-        if (empty($this->types[$name])) {
-            return null;
-        }
+        $metadata = $this->getEntityMetadata($entityName);
 
-        return $this->types[$name];
+        return $metadata ? $metadata->getClassName() : null;
     }
 
     /**
-     * @param string $className
+     * @param  string $className
      * @return string|null
      */
-    public function getType(string $className): ? string
+    public function getEntityName(string $className): ? string
     {
-        $flipped = array_flip($this->types);
+        $metadata = $this->getClassMetadata($className);
 
-        if (empty($flipped[$className])) {
-            return null;
-        }
-
-        return $flipped[$className];
-    }
-
-    /**
-     * @param string $path
-     * @return array
-     */
-    protected function getClassesInDirectory(string $path): array
-    {
-        $dir = new DirectoryIterator($path);
-
-        $entities = [];
-
-        foreach ($dir as $file) {
-            if ($file->isDot()) {
-                continue;
-            }
-
-            if ($file->isDir()) {
-                $results = $this->getClassesInDirectory($file->getRealPath());
-
-                $entities = array_merge($entities, $results);
-                continue;
-            }
-
-            $classes = $this->getClassesFromFile($file->getRealPath());
-
-            $entities = array_merge($entities, $classes);
-        }
-
-        return $entities;
-    }
-
-    /**
-     * @param string $file
-     * @return array
-     */
-    protected function getClassesFromFile(string $file): array
-    {
-        $reflected = new ReflectionFile($file);
-
-        $namespaces = $reflected->getFileNamespaces();
-
-        $classes = [];
-        foreach ($namespaces as $ns) {
-            $nsClasses = $ns->getClasses();
-            $classes = array_merge($classes, array_keys($nsClasses));
-        }
-
-        return $classes;
-    }
-
-    /**
-     * @param string $className
-     * @return $this|Registry
-     * @throws \ReflectionException
-     */
-    protected function processClassName(string $className)
-    {
-        $reflectionClass = new ReflectionClass($className);
-
-        if (!$this->isModel($reflectionClass)) {
-            return $this;
-        }
-
-        $metadata = $this->getModelMetadata($reflectionClass);
-
-        return $this->addType($metadata->getName(), $reflectionClass->getName());
-    }
-
-    /**
-     * @param ReflectionClass $reflectionClass
-     * @return Entity|null
-     */
-    protected function getModelMetadata(ReflectionClass $reflectionClass): ? Entity
-    {
-        $annotations = $this->annotationReader->getClassAnnotations($reflectionClass);
-        foreach ($annotations as $anno) {
-            if (is_a($anno, Entity::class)) {
-                return $anno;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param ReflectionClass $reflectionClass
-     * @return bool
-     */
-    protected function isModel(ReflectionClass $reflectionClass): bool
-    {
-        return !($this->getModelMetadata($reflectionClass) === null);
+        return $metadata ? $metadata->getName() : null;
     }
 }

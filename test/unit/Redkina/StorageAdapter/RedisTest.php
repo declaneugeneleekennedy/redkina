@@ -12,9 +12,11 @@ class RedisTest extends TestCase
     {
         $phpRedis = $this->prophesize(PhpRedis::class);
 
-        $phpRedis->hGetAll('Foo.1')->willReturn([
+        $phpRedis->hGetAll('Foo.1')->willReturn(
+            [
             'id' => '1'
-        ]);
+            ]
+        );
 
         $redis = new Redis($phpRedis->reveal());
 
@@ -54,14 +56,19 @@ class RedisTest extends TestCase
 
         $redis = new Redis($phpRedis->reveal());
 
-        $this->assertEquals(6, $redis->bond([
-            'spo:Foo.11:is_nemesis_of:Bar.22',
-            'sop:Foo.11:Bar.22:is_nemesis_of',
-            'ops:Bar.22:is_nemesis_of:Foo.11',
-            'pso:is_nemesis_of:Foo.11:Bar.22',
-            'pos:is_nemesis_of:Bar.22:Foo.11',
-            'osp:Bar.22:Foo.11:is_nemesis_of'
-        ]));
+        $this->assertEquals(
+            6,
+            $redis->bond(
+                [
+                'spo:Foo.11:is_nemesis_of:Bar.22',
+                'sop:Foo.11:Bar.22:is_nemesis_of',
+                'ops:Bar.22:is_nemesis_of:Foo.11',
+                'pso:is_nemesis_of:Foo.11:Bar.22',
+                'pos:is_nemesis_of:Bar.22:Foo.11',
+                'osp:Bar.22:Foo.11:is_nemesis_of'
+                ]
+            )
+        );
     }
 
     public function testHappyPathLoadBonds()

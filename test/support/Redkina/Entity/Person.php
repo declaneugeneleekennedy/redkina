@@ -3,12 +3,12 @@
 namespace DevDeclan\Test\Support\Redkina\Entity;
 
 use DevDeclan\Redkina\Entity;
-use DevDeclan\Redkina\Annotations as Redkina;
+use DevDeclan\Redkina\Annotation as Redkina;
 
 /**
  * Generic person Entity for tests
  *
- * @package DevDeclan\Test\Support\Model
+ * @package         DevDeclan\Test\Support\Model
  * @Redkina\Entity(
  *     name = "Person"
  * )
@@ -24,6 +24,12 @@ class Person extends Entity
      * @var string
      */
     protected $lastName;
+
+    /**
+     * @var                        int
+     * @Redkina\Property\Integer()
+     */
+    protected $age;
 
     /**
      * @var string
@@ -44,7 +50,7 @@ class Person extends Entity
     }
 
     /**
-     * @param string $firstName
+     * @param  string $firstName
      * @return Person
      */
     public function setFirstName(string $firstName): self
@@ -62,7 +68,7 @@ class Person extends Entity
     }
 
     /**
-     * @param string $lastName
+     * @param  string $lastName
      * @return Person
      */
     public function setLastName(string $lastName): self
@@ -80,7 +86,7 @@ class Person extends Entity
     }
 
     /**
-     * @param string $created
+     * @param  string $created
      * @return Person
      */
     public function setCreated(string $created): self
@@ -98,7 +104,7 @@ class Person extends Entity
     }
 
     /**
-     * @param string $updated
+     * @param  string $updated
      * @return Person
      */
     public function setUpdated($updated): self

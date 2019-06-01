@@ -24,8 +24,8 @@ class BondTest extends TestCase
 
         $registry = $this->prophesize(RegistryInterface::class);
 
-        $registry->getType(get_class($subject))->willReturn('Foo');
-        $registry->getType(get_class($object))->willReturn('Bar');
+        $registry->getEntityName(get_class($subject))->willReturn('Foo');
+        $registry->getEntityName(get_class($object))->willReturn('Bar');
 
         $bond = new Bond($registry->reveal());
 

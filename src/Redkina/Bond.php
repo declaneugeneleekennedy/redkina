@@ -31,17 +31,23 @@ class Bond
         $this->registry = $registry;
     }
 
-    public function create(BondableInterface $subject, BondableInterface $object, string $predicate = self::DEFAULT_TYPE)
-    {
+    public function create(
+        BondableInterface $subject,
+        BondableInterface $object,
+        string $predicate = self::DEFAULT_TYPE
+    ) {
         $mapped = $this->mapArguments($subject, $object, $predicate);
 
-        return array_reduce($this->getCombinations(), function ($acc, $combination) use ($mapped) {
-            $results = $acc ?? [];
+        return array_reduce(
+            $this->getCombinations(),
+            function ($acc, $combination) use ($mapped) {
+                $results = $acc ?? [];
 
-            $results[] = $this->generateKey($combination, $mapped);
+                $results[] = $this->generateKey($combination, $mapped);
 
-            return $results;
-        });
+                return $results;
+            }
+        );
     }
 
     public function getCombinations(): array
@@ -70,7 +76,7 @@ class Bond
 
             $parts[] = sprintf(
                 '%s.%s',
-                $this->registry->getType(get_class($mappedArgs[$partType])),
+                $this->registry->getEntityName(get_class($mappedArgs[$partType])),
                 $mappedArgs[$partType]->getId()
             );
         }

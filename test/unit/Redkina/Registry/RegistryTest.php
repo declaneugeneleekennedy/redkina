@@ -2,9 +2,12 @@
 
 namespace DevDeclan\Test\Unit\Redkina\Registry;
 
+use DevDeclan\Redkina\ClassLoader;
+use DevDeclan\Redkina\MetadataExtractor;
 use DevDeclan\Redkina\Registry\Registry;
 use DevDeclan\Test\Support\Redkina\Entity\Fake;
 use DevDeclan\Test\Support\Redkina\Entity\Person;
+use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit\Framework\TestCase;
 
 class RegistryTest extends TestCase
@@ -18,13 +21,16 @@ class RegistryTest extends TestCase
     {
         parent::setUp();
 
-        $this->registry = new Registry(__DIR__ . '/../../../support/Redkina/Entity');
+        $classLoader = new ClassLoader(__DIR__ . '/../../../support/Redkina/Entity');
+        $metadataExtractor = new MetadataExtractor(new AnnotationReader());
+
+        $this->registry = new Registry($classLoader, $metadataExtractor);
         $this->registry->initialise();
     }
 
     public function testThatEntitiesCanBeIdentifiedByClassName()
     {
-        $this->assertEquals('Person', $this->registry->getType(Person::class));
+        $this->assertEquals('Person', $this->registry->getEntityName(Person::class));
     }
 
     public function testThatEntitiesCanBeIdentifiedByType()
@@ -39,6 +45,6 @@ class RegistryTest extends TestCase
 
     public function testThatNonEntityClassNamesWillReturnNull()
     {
-        $this->assertNull($this->registry->getType(Fake::class));
+        $this->assertNull($this->registry->getEntityName(Fake::class));
     }
 }

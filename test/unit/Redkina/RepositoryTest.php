@@ -51,7 +51,7 @@ class RepositoryTest extends TestCase
     {
         $registry = $this->prophesize(RegistryInterface::class);
 
-        $registry->getType($this->className)->willReturn('Foo');
+        $registry->getEntityName($this->className)->willReturn('Foo');
         $registry->getClassName('Foo')->willReturn($this->className);
 
         $storage = $this->prophesize(StorageAdapterInterface::class);
@@ -69,7 +69,7 @@ class RepositoryTest extends TestCase
     {
         $registry = $this->prophesize(RegistryInterface::class);
 
-        $registry->getType($this->className)->willReturn('Foo');
+        $registry->getEntityName($this->className)->willReturn('Foo');
         $registry->getClassName('Foo')->willReturn($this->className);
 
         $storage = $this->prophesize(StorageAdapterInterface::class);
@@ -92,7 +92,7 @@ class RepositoryTest extends TestCase
 
         $registry = $this->prophesize(RegistryInterface::class);
 
-        $registry->getType($this->className)->willReturn('Foo');
+        $registry->getEntityName($this->className)->willReturn('Foo');
         $registry->getClassName('Foo')->willReturn($this->className);
 
         $storage = $this->prophesize(StorageAdapterInterface::class);
@@ -119,7 +119,7 @@ class RepositoryTest extends TestCase
 
         $registry = $this->prophesize(RegistryInterface::class);
 
-        $registry->getType($this->className)->willReturn('Foo');
+        $registry->getEntityName($this->className)->willReturn('Foo');
         $registry->getClassName('Foo')->willReturn($this->className);
 
         $storage = $this->prophesize(StorageAdapterInterface::class);

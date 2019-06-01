@@ -1,7 +1,8 @@
 <?php
 
-namespace DevDeclan\Redkina\Annotations;
+namespace DevDeclan\Redkina\Annotation;
 
+use DevDeclan\Redkina\AnnotationInterface;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
@@ -12,7 +13,7 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target("CLASS")
  */
-class Entity
+class Entity implements AnnotationInterface
 {
     /**
      * @var string

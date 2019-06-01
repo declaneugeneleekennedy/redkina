@@ -36,7 +36,7 @@ class Redis implements StorageAdapterInterface
     }
 
     /**
-     * @param string $key
+     * @param  string $key
      * @return array|null
      */
     public function load(string $key): ?array
@@ -45,8 +45,8 @@ class Redis implements StorageAdapterInterface
     }
 
     /**
-     * @param string $key
-     * @param array $data
+     * @param  string $key
+     * @param  array  $data
      * @return bool
      */
     public function save(string $key, array $data): bool
@@ -55,20 +55,26 @@ class Redis implements StorageAdapterInterface
     }
 
     /**
-     * @param array $keys
+     * @param  array $keys
      * @return bool
      */
     public function bond(array $keys): bool
     {
         return ($this->client->zAdd(
-                self::BOND_INDEX,
-                0, $keys[0],
-                0, $keys[1],
-                0, $keys[2],
-                0, $keys[3],
-                0, $keys[4],
-                0, $keys[5],
-                ) === 6);
+            self::BOND_INDEX,
+            0,
+            $keys[0],
+            0,
+            $keys[1],
+            0,
+            $keys[2],
+            0,
+            $keys[3],
+            0,
+            $keys[4],
+            0,
+            $keys[5],
+        ) === 6);
     }
 
     public function loadBonds(string $hexKey): array

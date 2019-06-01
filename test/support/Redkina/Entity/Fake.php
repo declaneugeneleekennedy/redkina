@@ -23,7 +23,7 @@ class Fake
     }
 
     /**
-     * @param string $id
+     * @param  string $id
      * @return Fake
      */
     public function setId(string $id): Fake
@@ -41,7 +41,7 @@ class Fake
     }
 
     /**
-     * @param string $name
+     * @param  string $name
      * @return Fake
      */
     public function setName(string $name): Fake

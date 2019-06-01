@@ -20,25 +20,28 @@ class Repository
     protected $idGenerator;
 
     /**
-     * @param RegistryInterface $registry
+     * @param RegistryInterface       $registry
      * @param StorageAdapterInterface $storage
-     * @param IdGeneratorInterface $idGenerator
+     * @param IdGeneratorInterface    $idGenerator
      */
-    public function __construct(RegistryInterface $registry, StorageAdapterInterface $storage, IdGeneratorInterface $idGenerator)
-    {
+    public function __construct(
+        RegistryInterface $registry,
+        StorageAdapterInterface $storage,
+        IdGeneratorInterface $idGenerator
+    ) {
         $this->registry = $registry;
         $this->storage = $storage;
         $this->idGenerator = $idGenerator;
     }
 
     /**
-     * @param string $className
-     * @param string $id
+     * @param  string $className
+     * @param  string $id
      * @return bool|Entity
      */
     public function load(string $className, string $id): ? Entity
     {
-        $key = $this->generateKeyByTypeAndId($this->registry->getType($className), $id);
+        $key = $this->generateKeyByTypeAndId($this->registry->getEntityName($className), $id);
 
         $data = $this->storage->load($key);
 
@@ -57,7 +60,7 @@ class Repository
     }
 
     /**
-     * @param Entity $entity
+     * @param  Entity $entity
      * @return Entity|null
      * @throws \Exception
      */
@@ -71,7 +74,7 @@ class Repository
     }
 
     /**
-     * @param Entity $entity
+     * @param  Entity $entity
      * @return Entity|null
      * @throws \Exception
      */
@@ -83,7 +86,7 @@ class Repository
     }
 
     /**
-     * @param Entity $entity
+     * @param  Entity $entity
      * @return Entity|null
      */
     protected function update(Entity $entity): ? Entity
@@ -94,18 +97,18 @@ class Repository
     }
 
     /**
-     * @param Entity $entity
+     * @param  Entity $entity
      * @return string
      */
     protected function generateKey(Entity $entity): string
     {
-        $type = $this->registry->getType(get_class($entity));
+        $type = $this->registry->getEntityName(get_class($entity));
         return $this->generateKeyByTypeAndId($type, $entity->getId());
     }
 
     /**
-     * @param string $typeName
-     * @param string $id
+     * @param  string $typeName
+     * @param  string $id
      * @return string
      */
     protected function generateKeyByTypeAndId(string $typeName, string $id)
