@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: php:7-fpm-alpine
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "composer.lock" }}
+            - v1-dependencies-
+      - run: apk add --no-cache --update --virtual buildDeps g++ make autoconf composer
+      - run: pecl install redis xdebug && docker-php-ext-enable redis xdebug
+      - run: composer install -n --prefer-dist
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.lock" }}
+          paths:
+            - ./vendor
+      - run: ./vendor/bin/phpunit test/unit
