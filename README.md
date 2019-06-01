@@ -1,5 +1,7 @@
 # Redkina
 
+[![CircleCI](https://circleci.com/gh/declaneugeneleekennedy/redkina.svg?style=svg)](https://circleci.com/gh/declaneugeneleekennedy/redkina)
+
 A graph indexing system written in PHP, backed by Redis.
 
 ## Background
