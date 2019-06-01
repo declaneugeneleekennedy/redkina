@@ -1,6 +1,6 @@
 # Redkina
 
-[![CircleCI](https://circleci.com/gh/declaneugeneleekennedy/redkina.svg?style=svg)](https://circleci.com/gh/declaneugeneleekennedy/redkina)
+[![CircleCI](https://circleci.com/gh/declaneugeneleekennedy/redkina.svg?style=svg)](https://circleci.com/gh/declaneugeneleekennedy/redkina) [![codecov](https://codecov.io/gh/declaneugeneleekennedy/redkina/branch/master/graph/badge.svg)](https://codecov.io/gh/declaneugeneleekennedy/redkina)
 
 A graph indexing system written in PHP, backed by Redis.
 
