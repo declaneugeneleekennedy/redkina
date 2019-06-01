@@ -70,11 +70,6 @@ class Repository
         return $this->update($entity);
     }
 
-    public function loadBonds(Entity $entity, string $type = null)
-    {
-
-    }
-
     /**
      * @param Entity $entity
      * @return Entity|null

@@ -74,4 +74,27 @@ class RedisTest extends TestCase
 
         $redis->loadBonds('fooooooooo');
     }
+
+    public function testThatTransactionsCanBeUsed()
+    {
+        $phpRedis = $this->prophesize(PhpRedis::class);
+
+        $phpRedis->multi()->willReturn($phpRedis->reveal());
+        $phpRedis->exec()->willReturn([]);
+        $phpRedis->discard()->shouldBeCalledTimes(1);
+
+        $redis = new Redis($phpRedis->reveal());
+
+        $redis->beginTransaction();
+        $this->assertTrue($redis->isIsInTransaction());
+
+        $redis->commit();
+        $this->assertFalse($redis->isIsInTransaction());
+
+        $redis->beginTransaction();
+        $this->assertTrue($redis->isIsInTransaction());
+
+        $redis->discard();
+        $this->assertFalse($redis->isIsInTransaction());
+    }
 }
