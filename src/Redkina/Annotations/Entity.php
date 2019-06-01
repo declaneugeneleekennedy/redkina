@@ -1,13 +1,13 @@
 <?php
 
-namespace Declaneugeneleekennedy\Redkina\Annotations;
+namespace DevDeclan\Redkina\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
 
 /**
  * Model annotation handler
  *
- * @package Declaneugeneleekennedy\Redkina\Annotation
+ * @package DevDeclan\Redkina\Annotation
  *
  * @Annotation
  * @Target("CLASS")

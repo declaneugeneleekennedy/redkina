@@ -1,13 +1,13 @@
 <?php
 
-namespace Declaneugeneleekennedy\Redkina\IdGenerator;
+namespace DevDeclan\Redkina\IdGenerator;
 
 use Ramsey\Uuid\Uuid as U;
 
 /**
  * ID Generator which returns a UUID
  *
- * @package Declaneugeneleekennedy\Redkina\IdGenerator
+ * @package DevDeclan\Redkina\IdGenerator
  */
 class Uuid
 {

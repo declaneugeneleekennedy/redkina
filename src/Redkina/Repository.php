@@ -1,6 +1,6 @@
 <?php
 
-namespace Declaneugeneleekennedy\Redkina;
+namespace DevDeclan\Redkina;
 
 class Repository
 {

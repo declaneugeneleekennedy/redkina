@@ -1,14 +1,14 @@
 <?php
 
-namespace Declaneugeneleekennedy\Test\Support\Redkina\Entity;
+namespace DevDeclan\Test\Support\Redkina\Entity;
 
-use Declaneugeneleekennedy\Redkina\Entity;
-use Declaneugeneleekennedy\Redkina\Annotations as Redkina;
+use DevDeclan\Redkina\Entity;
+use DevDeclan\Redkina\Annotations as Redkina;
 
 /**
  * Generic person Entity for tests
  *
- * @package Declaneugeneleekennedy\Test\Support\Model
+ * @package DevDeclan\Test\Support\Model
  * @Redkina\Entity(
  *     name = "Person"
  * )

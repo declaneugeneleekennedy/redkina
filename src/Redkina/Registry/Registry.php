@@ -1,9 +1,9 @@
 <?php
 
-namespace Declaneugeneleekennedy\Redkina\Registry;
+namespace DevDeclan\Redkina\Registry;
 
-use Declaneugeneleekennedy\Redkina\Annotations\Entity;
-use Declaneugeneleekennedy\Redkina\RegistryInterface;
+use DevDeclan\Redkina\Annotations\Entity;
+use DevDeclan\Redkina\RegistryInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 use Go\ParserReflection\ReflectionFile;

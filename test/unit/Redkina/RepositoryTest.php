@@ -1,12 +1,12 @@
 <?php
 
-namespace Declaneugeneleekennedy\Test\Unit\Redkina;
+namespace DevDeclan\Test\Unit\Redkina;
 
-use Declaneugeneleekennedy\Redkina\IdGeneratorInterface;
-use Declaneugeneleekennedy\Redkina\Entity;
-use Declaneugeneleekennedy\Redkina\RegistryInterface;
-use Declaneugeneleekennedy\Redkina\Repository;
-use Declaneugeneleekennedy\Redkina\StorageAdapterInterface;
+use DevDeclan\Redkina\IdGeneratorInterface;
+use DevDeclan\Redkina\Entity;
+use DevDeclan\Redkina\RegistryInterface;
+use DevDeclan\Redkina\Repository;
+use DevDeclan\Redkina\StorageAdapterInterface;
 use PHPUnit\Framework\TestCase;
 
 class RepositoryTest extends TestCase

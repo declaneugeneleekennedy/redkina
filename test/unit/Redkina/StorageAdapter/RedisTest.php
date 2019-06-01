@@ -1,10 +1,10 @@
 <?php
 
-namespace Declaneugeneleekennedy\Test\Unit\Redkina\StorageAdapter;
+namespace DevDeclan\Test\Unit\Redkina\StorageAdapter;
 
 use PHPUnit\Framework\TestCase;
 use Redis as PhpRedis;
-use Declaneugeneleekennedy\Redkina\StorageAdapter\Redis;
+use DevDeclan\Redkina\StorageAdapter\Redis;
 
 class RedisTest extends TestCase
 {

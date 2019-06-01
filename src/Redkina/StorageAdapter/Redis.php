@@ -1,14 +1,14 @@
 <?php
 
-namespace Declaneugeneleekennedy\Redkina\StorageAdapter;
+namespace DevDeclan\Redkina\StorageAdapter;
 
-use Declaneugeneleekennedy\Redkina\StorageAdapterInterface;
+use DevDeclan\Redkina\StorageAdapterInterface;
 use Redis as Client;
 
 /**
  * Default storage adapter which uses the PHP Redis client
  *
- * @package Declaneugeneleekennedy\Redkina\StorageAdapter
+ * @package DevDeclan\Redkina\StorageAdapter
  */
 class Redis implements StorageAdapterInterface
 {

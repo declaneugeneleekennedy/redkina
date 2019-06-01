@@ -1,0 +1,22 @@
+version: '3'
+services:
+  redkina:
+    build:
+      context: .
+    depends_on:
+      - redis
+    entrypoint: tail -f /dev/null
+    working_dir: /usr/src/redkina
+    volumes:
+      - .:/usr/src/redkina
+    networks:
+      - redkina
+  redis:
+    image: redis:alpine
+    ports:
+      - "6384:6379"
+    networks:
+      - redkina
+networks:
+  redkina:
+    external: false

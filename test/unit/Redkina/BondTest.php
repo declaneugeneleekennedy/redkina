@@ -1,10 +1,10 @@
 <?php
 
-namespace Declaneugeneleekennedy\Test\Unit\Redkina;
+namespace DevDeclan\Test\Unit\Redkina;
 
-use Declaneugeneleekennedy\Redkina\Bond;
-use Declaneugeneleekennedy\Redkina\BondableInterface;
-use Declaneugeneleekennedy\Redkina\RegistryInterface;
+use DevDeclan\Redkina\Bond;
+use DevDeclan\Redkina\BondableInterface;
+use DevDeclan\Redkina\RegistryInterface;
 use PHPUnit\Framework\TestCase;
 
 class BondTest extends TestCase
