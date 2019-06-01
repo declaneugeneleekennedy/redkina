@@ -1,0 +1,29 @@
+{
+  "name": "declaneugeneleekennedy/redkina",
+  "description": "A graph storage system backed by Redis",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Declaneugeneleekennedy\\Redkina\\": "./src/Redkina"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Declaneugeneleekennedy\\Test\\Unit\\Redkina\\": "./test/unit/Redkina",
+      "Declaneugeneleekennedy\\Test\\Support\\Redkina\\": "./test/support/Redkina"
+    }
+  },
+  "require": {
+    "php": "^7.2",
+    "ext-json": "*",
+    "ext-redis": "*",
+    "ramsey/uuid": "^3.8",
+    "doctrine/common": "^2.10",
+    "goaop/parser-reflection": "^2.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8",
+    "psy/psysh": "^0.9.9"
+  }
+}
