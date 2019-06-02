@@ -4,11 +4,13 @@ namespace DevDeclan\Test\Support\Redkina\Entity;
 
 use DevDeclan\Redkina\Entity;
 use DevDeclan\Redkina\Annotation as Redkina;
+use DateTime;
 
 /**
  * Generic person Entity for tests
  *
- * @package         DevDeclan\Test\Support\Model
+ * @package DevDeclan\Test\Support\Model
+ *
  * @Redkina\Entity(
  *     name = "Person"
  * )
@@ -17,27 +19,43 @@ class Person extends Entity
 {
     /**
      * @var string
+     *
+     * @Redkina\Property\Id()
+     */
+    protected $id;
+
+    /**
+     * @var string
+     *
+     * @Redkina\Property\Generic()
      */
     protected $firstName;
 
     /**
      * @var string
+     *
+     * @Redkina\Property\Generic()
      */
     protected $lastName;
 
     /**
-     * @var                        int
+     * @var int
+     *
      * @Redkina\Property\Integer()
      */
     protected $age;
 
     /**
-     * @var string
+     * @var DateTime
+     *
+     * @Redkina\Property\Timestamp()
      */
     protected $created;
 
     /**
-     * @var string
+     * @var DateTime
+     *
+     * @Redkina\Property\Timestamp()
      */
     protected $updated;
 
@@ -78,36 +96,36 @@ class Person extends Entity
     }
 
     /**
-     * @return string
+     * @return DateTime
      */
-    public function getCreated(): string
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
 
     /**
-     * @param  string $created
+     * @param  DateTime $created
      * @return Person
      */
-    public function setCreated(string $created): self
+    public function setCreated(DateTime $created): self
     {
         $this->created = $created;
         return $this;
     }
 
     /**
-     * @return string
+     * @return DateTime
      */
-    public function getUpdated(): string
+    public function getUpdated(): DateTime
     {
         return $this->updated;
     }
 
     /**
-     * @param  string $updated
+     * @param  DateTime $updated
      * @return Person
      */
-    public function setUpdated($updated): self
+    public function setUpdated(DateTime $updated): self
     {
         $this->updated = $updated;
         return $this;

@@ -4,6 +4,8 @@ namespace DevDeclan\Test\Unit\Redkina;
 
 use DevDeclan\Redkina\IdGeneratorInterface;
 use DevDeclan\Redkina\Entity;
+use DevDeclan\Redkina\Metadata\Property\Generic as GenericMetadata;
+use DevDeclan\Redkina\Metadata\Entity as EntityMetadata;
 use DevDeclan\Redkina\RegistryInterface;
 use DevDeclan\Redkina\Repository;
 use DevDeclan\Redkina\StorageAdapterInterface;
@@ -15,6 +17,11 @@ class RepositoryTest extends TestCase
      * @var string
      */
     protected $className;
+
+    /**
+     * @var EntityMetadata
+     */
+    protected $entityMetadata;
 
     /**
      * @var array
@@ -45,6 +52,12 @@ class RepositoryTest extends TestCase
         };
 
         $this->className = get_class($entity);
+
+        $this->entityMetadata = (new EntityMetadata())
+            ->setName('Foo')
+            ->setClassName($this->className)
+            ->addProperty('id', new GenericMetadata())
+            ->addProperty('name', new GenericMetadata());
     }
 
     public function testHappyPathLoad()
@@ -53,6 +66,7 @@ class RepositoryTest extends TestCase
 
         $registry->getEntityName($this->className)->willReturn('Foo');
         $registry->getClassName('Foo')->willReturn($this->className);
+        $registry->getClassMetadata($this->className)->willReturn($this->entityMetadata);
 
         $storage = $this->prophesize(StorageAdapterInterface::class);
 
@@ -71,6 +85,7 @@ class RepositoryTest extends TestCase
 
         $registry->getEntityName($this->className)->willReturn('Foo');
         $registry->getClassName('Foo')->willReturn($this->className);
+        $registry->getClassMetadata($this->className)->willReturn($this->entityMetadata);
 
         $storage = $this->prophesize(StorageAdapterInterface::class);
 
@@ -94,6 +109,7 @@ class RepositoryTest extends TestCase
 
         $registry->getEntityName($this->className)->willReturn('Foo');
         $registry->getClassName('Foo')->willReturn($this->className);
+        $registry->getClassMetadata($this->className)->willReturn($this->entityMetadata);
 
         $storage = $this->prophesize(StorageAdapterInterface::class);
 
@@ -121,6 +137,7 @@ class RepositoryTest extends TestCase
 
         $registry->getEntityName($this->className)->willReturn('Foo');
         $registry->getClassName('Foo')->willReturn($this->className);
+        $registry->getClassMetadata($this->className)->willReturn($this->entityMetadata);
 
         $storage = $this->prophesize(StorageAdapterInterface::class);
 

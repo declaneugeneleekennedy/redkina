@@ -1,4 +1,4 @@
-FROM php:7-fpm-alpine
+FROM php:7-cli-alpine
 
 RUN apk add --no-cache --update --virtual buildDeps g++ make autoconf composer
 

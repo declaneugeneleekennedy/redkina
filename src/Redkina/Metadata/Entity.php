@@ -76,4 +76,13 @@ class Entity
 
         return $this;
     }
+
+    /**
+     * @param string $name
+     * @return PropertyInterface|null
+     */
+    public function getProperty(string $name): ? PropertyInterface
+    {
+        return $this->properties[$name] ?? null;
+    }
 }

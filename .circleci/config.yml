@@ -2,7 +2,9 @@ version: 2
 jobs:
   build:
     docker:
-      - image: php:7-fpm-alpine
+      - image: php:7-cli-alpine
+        environment:
+          COMPOSER_ALLOW_SUPERUSER: 1
     steps:
       - checkout
       - restore_cache:

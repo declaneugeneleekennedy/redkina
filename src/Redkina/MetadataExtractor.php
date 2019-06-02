@@ -3,10 +3,14 @@
 namespace DevDeclan\Redkina;
 
 use DevDeclan\Redkina\Annotation\Entity;
+use DevDeclan\Redkina\Annotation\Property\Generic;
 use DevDeclan\Redkina\Annotation\Property\Integer;
+use DevDeclan\Redkina\Annotation\Property\Timestamp;
 use DevDeclan\Redkina\Annotation\PropertyInterface;
 use DevDeclan\Redkina\Metadata\Entity as EntityMetadata;
+use DevDeclan\Redkina\Metadata\Property\Generic as GenericMetadata;
 use DevDeclan\Redkina\Metadata\Property\Integer as IntegerMetadata;
+use DevDeclan\Redkina\Metadata\Property\Timestamp as TimestampMetadata;
 use Doctrine\Common\Annotations\AnnotationReader;
 use ReflectionClass;
 use ReflectionProperty;
@@ -18,11 +22,18 @@ class MetadataExtractor
      */
     protected $annotationReader;
 
+    /**
+     * @param AnnotationReader $annotationReader
+     */
     public function __construct(AnnotationReader $annotationReader)
     {
         $this->annotationReader = $annotationReader;
     }
 
+    /**
+     * @param ReflectionClass $reflectionClass
+     * @return EntityMetadata|null
+     */
     public function extract(ReflectionClass $reflectionClass): ? EntityMetadata
     {
         $entityMetadata = $this->extractEntity($reflectionClass);
@@ -44,6 +55,10 @@ class MetadataExtractor
         return $entityMetadata;
     }
 
+    /**
+     * @param ReflectionClass $reflectionClass
+     * @return Entity|null
+     */
     protected function getEntityAnnotation(ReflectionClass $reflectionClass): ? Entity
     {
         foreach ($this->annotationReader->getClassAnnotations($reflectionClass) as $annotation) {
@@ -55,6 +70,10 @@ class MetadataExtractor
         return null;
     }
 
+    /**
+     * @param ReflectionClass $reflectionClass
+     * @return EntityMetadata|null
+     */
     protected function extractEntity(ReflectionClass $reflectionClass): ? EntityMetadata
     {
         $entityAnnotation = $this->getEntityAnnotation($reflectionClass);
@@ -68,6 +87,10 @@ class MetadataExtractor
             ->setClassName($reflectionClass->getName());
     }
 
+    /**
+     * @param ReflectionClass $reflectionClass
+     * @return array
+     */
     protected function extractProperties(ReflectionClass $reflectionClass): array
     {
         $properties = [];
@@ -78,6 +101,10 @@ class MetadataExtractor
         return $properties;
     }
 
+    /**
+     * @param ReflectionProperty $property
+     * @return \DevDeclan\Redkina\Metadata\PropertyInterface|null
+     */
     protected function extractProperty(ReflectionProperty $property)
     {
         $propertyAnnotations = $this->annotationReader->getPropertyAnnotations($property);
@@ -91,12 +118,20 @@ class MetadataExtractor
         return null;
     }
 
+    /**
+     * @param PropertyInterface $propertyAnnotation
+     * @return \DevDeclan\Redkina\Metadata\PropertyInterface
+     */
     protected function propertyFactory(PropertyInterface $propertyAnnotation)
     {
         switch (get_class($propertyAnnotation)) {
             case Integer::class:
-            default:
                 return new IntegerMetadata();
+            case Timestamp::class:
+                return new TimestampMetadata();
+            case Generic::class:
+            default:
+                return new GenericMetadata();
         }
     }
 }

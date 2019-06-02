@@ -7,6 +7,8 @@ services:
       - redis
     entrypoint: tail -f /dev/null
     working_dir: /usr/src/redkina
+    environment:
+      COMPOSER_ALLOW_SUPERUSER: 1
     volumes:
       - .:/usr/src/redkina
     networks:

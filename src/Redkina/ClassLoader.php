@@ -7,8 +7,14 @@ use Go\ParserReflection\ReflectionFile;
 
 class ClassLoader
 {
+    /**
+     * @var string
+     */
     protected $path;
 
+    /**
+     * @param string $path
+     */
     public function __construct(string $path)
     {
         $this->path = $path;

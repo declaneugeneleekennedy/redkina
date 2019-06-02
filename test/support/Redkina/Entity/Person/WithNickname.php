@@ -16,6 +16,8 @@ class WithNickname extends Person
 {
     /**
      * @var string
+     *
+     * @Redkina\Property\Generic()
      */
     protected $nickname;
 

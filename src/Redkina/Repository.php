@@ -49,14 +49,10 @@ class Repository
             return null;
         }
 
-        $entity = new $className();
+        $metadata = $this->registry->getClassMetadata($className);
+        $mapper = new \DevDeclan\Redkina\Mapper\Entity($metadata);
 
-        foreach ($data as $key => $value) {
-            $expectedSetter = 'set' . ucfirst($key);
-            $entity->$expectedSetter($value);
-        }
-
-        return $entity;
+        return $mapper->out($data);
     }
 
     /**
@@ -91,7 +87,11 @@ class Repository
      */
     protected function update(Entity $entity): ? Entity
     {
-        $data = $entity->jsonSerialize();
+        $entityMetadata = $this->registry->getClassMetadata(get_class($entity));
+
+        $mapper = new \DevDeclan\Redkina\Mapper\Entity($entityMetadata);
+
+        $data = $mapper->in($entity);
 
         return $this->storage->save($this->generateKey($entity), $data) ? $entity : null;
     }
@@ -114,5 +114,24 @@ class Repository
     protected function generateKeyByTypeAndId(string $typeName, string $id)
     {
         return sprintf('%s.%s', $typeName, $id);
+    }
+
+    protected function getFromEntity(Entity $entity, string $property)
+    {
+        $method = $this->generatePropertyMethodName('get', $property);
+
+        return $entity->$method();
+    }
+
+    protected function setToEntity(Entity $entity, string $property, $value)
+    {
+        $method = $this->generatePropertyMethodName('set', $property);
+
+        return $entity->$method($value);
+    }
+
+    protected function generatePropertyMethodName(string $prefix, string $name)
+    {
+        return $prefix . ucfirst($name);
     }
 }
