@@ -3,8 +3,7 @@
 namespace DevDeclan\Redkina;
 
 /**
- * Storage is provided as an adapter so that any Redis library can be dropped used with a
- * little bit of work
+ * Storage is provided as an adapter so that any Redis library can be dropped in and used with a little bit of work.
  *
  * @package DevDeclan\Redkina
  */

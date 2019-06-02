@@ -39,7 +39,7 @@ class Repository
     /**
      * @param  string $className
      * @param  string $id
-     * @return bool|Entity
+     * @return bool|object
      */
     public function load(string $className, string $id): ? object
     {
