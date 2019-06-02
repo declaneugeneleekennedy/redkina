@@ -3,14 +3,8 @@
 namespace DevDeclan\Redkina;
 
 use DevDeclan\Redkina\Annotation\Entity;
-use DevDeclan\Redkina\Annotation\Property\Generic;
-use DevDeclan\Redkina\Annotation\Property\Integer;
-use DevDeclan\Redkina\Annotation\Property\Timestamp;
 use DevDeclan\Redkina\Annotation\PropertyInterface;
 use DevDeclan\Redkina\Metadata\Entity as EntityMetadata;
-use DevDeclan\Redkina\Metadata\Property\Generic as GenericMetadata;
-use DevDeclan\Redkina\Metadata\Property\Integer as IntegerMetadata;
-use DevDeclan\Redkina\Metadata\Property\Timestamp as TimestampMetadata;
 use Doctrine\Common\Annotations\AnnotationReader;
 use ReflectionClass;
 use ReflectionProperty;
@@ -23,11 +17,18 @@ class MetadataExtractor
     protected $annotationReader;
 
     /**
-     * @param AnnotationReader $annotationReader
+     * @var PropertyMetadataFactory
      */
-    public function __construct(AnnotationReader $annotationReader)
+    protected $propertyMetadataFactory;
+
+    /**
+     * @param AnnotationReader $annotationReader
+     * @param PropertyMetadataFactory $propertyMetadataFactory
+     */
+    public function __construct(AnnotationReader $annotationReader, PropertyMetadataFactory $propertyMetadataFactory)
     {
         $this->annotationReader = $annotationReader;
+        $this->propertyMetadataFactory = $propertyMetadataFactory;
     }
 
     /**
@@ -111,27 +112,10 @@ class MetadataExtractor
 
         foreach ($propertyAnnotations as $annotation) {
             if (is_a($annotation, PropertyInterface::class)) {
-                return $this->propertyFactory($annotation);
+                return $this->propertyMetadataFactory->getByAnnotation($annotation);
             }
         }
 
         return null;
-    }
-
-    /**
-     * @param PropertyInterface $propertyAnnotation
-     * @return \DevDeclan\Redkina\Metadata\PropertyInterface
-     */
-    protected function propertyFactory(PropertyInterface $propertyAnnotation)
-    {
-        switch (get_class($propertyAnnotation)) {
-            case Integer::class:
-                return new IntegerMetadata();
-            case Timestamp::class:
-                return new TimestampMetadata();
-            case Generic::class:
-            default:
-                return new GenericMetadata();
-        }
     }
 }

@@ -3,13 +3,15 @@
 namespace DevDeclan\Test\Unit\Redkina;
 
 use DevDeclan\Redkina\IdGeneratorInterface;
-use DevDeclan\Redkina\Entity;
 use DevDeclan\Redkina\Metadata\Property\Generic as GenericMetadata;
 use DevDeclan\Redkina\Metadata\Entity as EntityMetadata;
+use DevDeclan\Redkina\Metadata\Property\Integer as IntegerMetadata;
+use DevDeclan\Redkina\Metadata\Property\Timestamp as TimestampMetadata;
 use DevDeclan\Redkina\RegistryInterface;
 use DevDeclan\Redkina\Repository;
 use DevDeclan\Redkina\StorageAdapterInterface;
 use PHPUnit\Framework\TestCase;
+use DateTime;
 
 class RepositoryTest extends TestCase
 {
@@ -29,14 +31,31 @@ class RepositoryTest extends TestCase
     protected $fooData = [
         'id' => 'this-is-not-a-real-uuid-oh',
         'name' => 'this is also not a real name',
+        'num' => '123',
+        'time' => '2019-06-02T01:29:11+00:00',
     ];
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $entity = new class() extends Entity {
+        $entity = new class() {
+            protected $id;
             protected $name;
+            protected $num;
+            protected $time;
+
+            public function getId()
+            {
+                return $this->id;
+            }
+
+            public function setId(string $id)
+            {
+                $this->id = $id;
+
+                return $this;
+            }
 
             public function getName()
             {
@@ -49,6 +68,29 @@ class RepositoryTest extends TestCase
 
                 return $this;
             }
+
+            public function getNum()
+            {
+                return $this->num;
+            }
+
+
+            public function setNum($num)
+            {
+                $this->num = $num;
+                return $this;
+            }
+
+            public function getTime()
+            {
+                return $this->time;
+            }
+
+            public function setTime($time)
+            {
+                $this->time = $time;
+                return $this;
+            }
         };
 
         $this->className = get_class($entity);
@@ -57,7 +99,9 @@ class RepositoryTest extends TestCase
             ->setName('Foo')
             ->setClassName($this->className)
             ->addProperty('id', new GenericMetadata())
-            ->addProperty('name', new GenericMetadata());
+            ->addProperty('name', new GenericMetadata())
+            ->addProperty('num', new IntegerMetadata())
+            ->addProperty('time', new TimestampMetadata());
     }
 
     public function testHappyPathLoad()
@@ -103,7 +147,10 @@ class RepositoryTest extends TestCase
         $cn = $this->className;
         $entity = new $cn('Foo');
 
-        $entity->setName($this->fooData['name']);
+        $entity
+            ->setName($this->fooData['name'])
+            ->setNum((int)$this->fooData['num'])
+            ->setTime(new DateTime($this->fooData['time']));
 
         $registry = $this->prophesize(RegistryInterface::class);
 
@@ -131,7 +178,9 @@ class RepositoryTest extends TestCase
 
         $entity
             ->setId($this->fooData['id'])
-            ->setName($this->fooData['name']);
+            ->setName($this->fooData['name'])
+            ->setNum((int)$this->fooData['num'])
+            ->setTime(new DateTime($this->fooData['time']));
 
         $registry = $this->prophesize(RegistryInterface::class);
 

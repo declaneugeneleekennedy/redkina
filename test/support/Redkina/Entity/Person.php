@@ -2,7 +2,7 @@
 
 namespace DevDeclan\Test\Support\Redkina\Entity;
 
-use DevDeclan\Redkina\Entity;
+use DevDeclan\Test\Support\Redkina\Annotation as NotRedkina;
 use DevDeclan\Redkina\Annotation as Redkina;
 use DateTime;
 
@@ -15,7 +15,7 @@ use DateTime;
  *     name = "Person"
  * )
  */
-class Person extends Entity
+class Person
 {
     /**
      * @var string
@@ -58,6 +58,13 @@ class Person extends Entity
      * @Redkina\Property\Timestamp()
      */
     protected $updated;
+
+    /**
+     * @var string|null
+     *
+     * @NotRedkina\Fake()
+     */
+    protected $ignored;
 
     /**
      * @return string

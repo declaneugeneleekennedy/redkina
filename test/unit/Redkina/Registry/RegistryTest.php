@@ -4,6 +4,7 @@ namespace DevDeclan\Test\Unit\Redkina\Registry;
 
 use DevDeclan\Redkina\ClassLoader;
 use DevDeclan\Redkina\MetadataExtractor;
+use DevDeclan\Redkina\PropertyMetadataFactory;
 use DevDeclan\Redkina\Registry\Registry;
 use DevDeclan\Test\Support\Redkina\Entity\Fake;
 use DevDeclan\Test\Support\Redkina\Entity\Person;
@@ -22,7 +23,7 @@ class RegistryTest extends TestCase
         parent::setUp();
 
         $classLoader = new ClassLoader(__DIR__ . '/../../../support/Redkina/Entity');
-        $metadataExtractor = new MetadataExtractor(new AnnotationReader());
+        $metadataExtractor = new MetadataExtractor(new AnnotationReader(), new PropertyMetadataFactory());
 
         $this->registry = new Registry($classLoader, $metadataExtractor);
         $this->registry->initialise();

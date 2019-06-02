@@ -2,6 +2,8 @@
 
 namespace DevDeclan\Redkina;
 
+use DevDeclan\Redkina\Mapper\Entity as EntityMapper;
+
 class Repository
 {
     /**
@@ -39,7 +41,7 @@ class Repository
      * @param  string $id
      * @return bool|Entity
      */
-    public function load(string $className, string $id): ? Entity
+    public function load(string $className, string $id): ? object
     {
         $key = $this->generateKeyByTypeAndId($this->registry->getEntityName($className), $id);
 
@@ -50,17 +52,17 @@ class Repository
         }
 
         $metadata = $this->registry->getClassMetadata($className);
-        $mapper = new \DevDeclan\Redkina\Mapper\Entity($metadata);
+        $mapper = new EntityMapper($metadata);
 
         return $mapper->out($data);
     }
 
     /**
-     * @param  Entity $entity
-     * @return Entity|null
+     * @param  object $entity
+     * @return object|null
      * @throws \Exception
      */
-    public function save(Entity $entity): ? Entity
+    public function save(object $entity): ? object
     {
         if (!$entity->getId()) {
             return $this->insert($entity);
@@ -70,11 +72,11 @@ class Repository
     }
 
     /**
-     * @param  Entity $entity
-     * @return Entity|null
+     * @param  object $entity
+     * @return object|null
      * @throws \Exception
      */
-    protected function insert(Entity $entity): ? Entity
+    protected function insert(object $entity): ? object
     {
         $entity->setId($this->idGenerator->generate());
 
@@ -82,14 +84,14 @@ class Repository
     }
 
     /**
-     * @param  Entity $entity
-     * @return Entity|null
+     * @param  object $entity
+     * @return object|null
      */
-    protected function update(Entity $entity): ? Entity
+    protected function update(object $entity): ? object
     {
         $entityMetadata = $this->registry->getClassMetadata(get_class($entity));
 
-        $mapper = new \DevDeclan\Redkina\Mapper\Entity($entityMetadata);
+        $mapper = new EntityMapper($entityMetadata);
 
         $data = $mapper->in($entity);
 
@@ -97,10 +99,10 @@ class Repository
     }
 
     /**
-     * @param  Entity $entity
+     * @param  object $entity
      * @return string
      */
-    protected function generateKey(Entity $entity): string
+    protected function generateKey(object $entity): string
     {
         $type = $this->registry->getEntityName(get_class($entity));
         return $this->generateKeyByTypeAndId($type, $entity->getId());
@@ -114,24 +116,5 @@ class Repository
     protected function generateKeyByTypeAndId(string $typeName, string $id)
     {
         return sprintf('%s.%s', $typeName, $id);
-    }
-
-    protected function getFromEntity(Entity $entity, string $property)
-    {
-        $method = $this->generatePropertyMethodName('get', $property);
-
-        return $entity->$method();
-    }
-
-    protected function setToEntity(Entity $entity, string $property, $value)
-    {
-        $method = $this->generatePropertyMethodName('set', $property);
-
-        return $entity->$method($value);
-    }
-
-    protected function generatePropertyMethodName(string $prefix, string $name)
-    {
-        return $prefix . ucfirst($name);
     }
 }
