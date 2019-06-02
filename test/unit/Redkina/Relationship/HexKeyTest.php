@@ -53,7 +53,9 @@ class HexKeyTest extends HexTestCase
 
     public function hydrateHappyPathProvider()
     {
-        return array_map(function ($key) { return [$key]; }, $this->keys);
+        return array_map(function ($key) {
+            return [$key];
+        }, $this->keys);
     }
 
     /**
