@@ -8,7 +8,8 @@
     "coverage": "phpunit test/unit --coverage-html cover",
     "coverage-xml": "phpunit test/unit --coverage-clover coverage.xml",
     "lint": "phpcs --standard=PSR2 ./src ./test",
-    "format": "phpcbf --standard=PSR2 ./src ./test"
+    "format": "phpcbf --standard=PSR2 ./src ./test",
+    "shell": "psysh test/bootstrap.php"
   },
   "autoload": {
     "psr-4": {

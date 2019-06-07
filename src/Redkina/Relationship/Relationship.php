@@ -20,9 +20,40 @@ class Relationship
     protected $predicate;
 
     /**
-     * @return Connectable
+     * @var object|null
      */
-    public function getSubject(): Connectable
+    protected $edge = null;
+
+    /**
+     * @return object|null
+     */
+    public function getEdge(): ? object
+    {
+        return $this->edge;
+    }
+
+    /**
+     * @param object|null $edge
+     * @return Relationship
+     */
+    public function setEdge(? object $edge): Relationship
+    {
+        $this->edge = $edge;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasEdge(): bool
+    {
+        return !(empty($this->edge));
+    }
+
+    /**
+     * @return Connectable|null
+     */
+    public function getSubject(): ? Connectable
     {
         return $this->subject;
     }
@@ -37,10 +68,15 @@ class Relationship
         return $this;
     }
 
+    public function hasSubject(): bool
+    {
+        return !(empty($this->subject));
+    }
+
     /**
-     * @return Connectable
+     * @return Connectable|null
      */
-    public function getObject(): Connectable
+    public function getObject(): ? Connectable
     {
         return $this->object;
     }
@@ -55,10 +91,15 @@ class Relationship
         return $this;
     }
 
+    public function hasObject(): bool
+    {
+        return !(empty($this->object));
+    }
+
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPredicate(): string
+    public function getPredicate(): ? string
     {
         return $this->predicate;
     }
@@ -71,5 +112,15 @@ class Relationship
     {
         $this->predicate = $predicate;
         return $this;
+    }
+
+    public function hasPredicate(): bool
+    {
+        return !(empty($this->predicate));
+    }
+
+    public static function factory(object $subjectEntity, string $predicate, object $objectEntity): object
+    {
+
     }
 }

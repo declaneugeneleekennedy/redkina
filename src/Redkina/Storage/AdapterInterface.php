@@ -1,13 +1,13 @@
 <?php
 
-namespace DevDeclan\Redkina;
+namespace DevDeclan\Redkina\Storage;
 
 /**
  * Storage is provided as an adapter so that any Redis library can be dropped in and used with a little bit of work.
  *
  * @package DevDeclan\Redkina
  */
-interface StorageAdapterInterface
+interface AdapterInterface
 {
     /**
      * Load a hashed object
@@ -27,12 +27,22 @@ interface StorageAdapterInterface
     public function save(string $key, array $data): bool;
 
     /**
-     * Add a hexastore which defines a bond to a ZSET
+     * Add a hexastore which defines a relationship to a ZSET
      *
      * @param  array $keys
      * @return bool
      */
-    public function bond(array $keys): bool;
+    public function saveHexastore(array $keys): bool;
 
-    public function loadBonds(string $hexKey): array;
+    public function queryHexastore(string $hexKey): array;
+
+    public function saveEdge(string $key, string $edgeKey): bool;
+
+    public function isInTransaction(): bool;
+
+    public function beginTransaction();
+
+    public function commit();
+
+    public function discard();
 }

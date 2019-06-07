@@ -2,6 +2,12 @@
 
 namespace DevDeclan\Test\Support\Redkina\Entity;
 
+/**
+ * This class is here to make sure that Redkina doesn't try to add classes to the registry which aren't actually Redkina
+ * compatible entities, which it determines using annotations (or the absence thereof).
+ *
+ * @package DevDeclan\Test\Support\Redkina\Entity
+ */
 class Fake
 {
     /**

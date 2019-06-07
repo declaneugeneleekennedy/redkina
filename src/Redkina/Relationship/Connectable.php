@@ -15,9 +15,9 @@ class Connectable
     protected $name;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getId(): string
+    public function getId(): ? string
     {
         return $this->id;
     }
@@ -48,5 +48,12 @@ class Connectable
     {
         $this->name = $name;
         return $this;
+    }
+
+    public static function factory(string $name, string $id)
+    {
+        return (new self())
+            ->setName($name)
+            ->setId($id);
     }
 }

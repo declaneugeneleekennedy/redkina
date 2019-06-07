@@ -3,14 +3,14 @@
 namespace DevDeclan\Test\Unit\Redkina\StorageAdapter;
 
 use PHPUnit\Framework\TestCase;
-use Redis as PhpRedis;
-use DevDeclan\Redkina\StorageAdapter\Redis;
+use DevDeclan\Redkina\Storage\Adapter\PhpRedis;
+use Redis;
 
-class RedisTest extends TestCase
+class PhpRedisTest extends TestCase
 {
     public function testHappyPathLoad()
     {
-        $phpRedis = $this->prophesize(PhpRedis::class);
+        $phpRedis = $this->prophesize(Redis::class);
 
         $phpRedis->hGetAll('Foo.1')->willReturn(
             [
@@ -18,28 +18,28 @@ class RedisTest extends TestCase
             ]
         );
 
-        $redis = new Redis($phpRedis->reveal());
+        $redis = new PhpRedis($phpRedis->reveal());
 
         $this->assertEquals(['id' => '1'], $redis->load('Foo.1'));
     }
 
     public function testHappyPathSave()
     {
-        $phpRedis = $this->prophesize(PhpRedis::class);
+        $phpRedis = $this->prophesize(Redis::class);
 
         $phpRedis->hMset('Foo.1', ['id' => '1'])->willReturn(true);
 
-        $redis = new Redis($phpRedis->reveal());
+        $redis = new PhpRedis($phpRedis->reveal());
 
         $this->assertTrue($redis->save('Foo.1', ['id' => '1']));
     }
 
     public function testHappyPathBond()
     {
-        $phpRedis = $this->prophesize(PhpRedis::class);
+        $phpRedis = $this->prophesize(Redis::class);
 
         $phpRedis->zAdd(
-            'bonds',
+            'relationships',
             0,
             'spo:Foo.11:is_nemesis_of:Bar.22',
             0,
@@ -54,11 +54,11 @@ class RedisTest extends TestCase
             'osp:Bar.22:Foo.11:is_nemesis_of'
         )->willReturn(6);
 
-        $redis = new Redis($phpRedis->reveal());
+        $redis = new PhpRedis($phpRedis->reveal());
 
         $this->assertEquals(
             6,
-            $redis->bond(
+            $redis->saveHexastore(
                 [
                 'spo:Foo.11:is_nemesis_of:Bar.22',
                 'sop:Foo.11:Bar.22:is_nemesis_of',
@@ -73,35 +73,37 @@ class RedisTest extends TestCase
 
     public function testHappyPathLoadBonds()
     {
-        $phpRedis = $this->prophesize(PhpRedis::class);
-        $redis = new Redis($phpRedis->reveal());
+        $phpRedis = $this->prophesize(Redis::class);
 
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Not yet implemented');
+        $phpRedis
+            ->zRangeByLex('relationships', "[spo:Foo.11:is_nemesis_of:", "[spo:Foo.11:is_nemesis_of:\xff", null, null)
+            ->willReturn(['spo:Foo.11:is_nemesis_of:Bar.22']);
 
-        $redis->loadBonds('fooooooooo');
+        $redis = new PhpRedis($phpRedis->reveal());
+
+        $this->assertEquals(['spo:Foo.11:is_nemesis_of:Bar.22'], $redis->queryHexastore('spo:Foo.11:is_nemesis_of:'));
     }
 
     public function testThatTransactionsCanBeUsed()
     {
-        $phpRedis = $this->prophesize(PhpRedis::class);
+        $phpRedis = $this->prophesize(Redis::class);
 
         $phpRedis->multi()->willReturn($phpRedis->reveal());
         $phpRedis->exec()->willReturn([]);
         $phpRedis->discard()->shouldBeCalledTimes(1);
 
-        $redis = new Redis($phpRedis->reveal());
+        $redis = new PhpRedis($phpRedis->reveal());
 
         $redis->beginTransaction();
-        $this->assertTrue($redis->isIsInTransaction());
+        $this->assertTrue($redis->isInTransaction());
 
         $redis->commit();
-        $this->assertFalse($redis->isIsInTransaction());
+        $this->assertFalse($redis->isInTransaction());
 
         $redis->beginTransaction();
-        $this->assertTrue($redis->isIsInTransaction());
+        $this->assertTrue($redis->isInTransaction());
 
         $redis->discard();
-        $this->assertFalse($redis->isIsInTransaction());
+        $this->assertFalse($redis->isInTransaction());
     }
 }

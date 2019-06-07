@@ -1,36 +1,36 @@
 <?php
 
-namespace DevDeclan\Redkina\StorageAdapter;
+namespace DevDeclan\Redkina\Storage\Adapter;
 
-use DevDeclan\Redkina\StorageAdapterInterface;
-use Redis as Client;
+use DevDeclan\Redkina\Storage\AdapterInterface;
+use Redis;
 
 /**
  * Default storage adapter which uses the PHP Redis client
  *
  * @package DevDeclan\Redkina\StorageAdapter
  */
-class Redis implements StorageAdapterInterface
+class PhpRedis implements AdapterInterface
 {
     /**
      * @var string
      */
-    const BOND_INDEX = 'bonds';
+    const RELATIONSHIP_INDEX = 'relationships';
 
     /**
-     * @var Client
+     * @var Redis
      */
     protected $client;
 
     /**
      * @var bool
      */
-    protected $isInTransaction = false;
+    protected $inTransaction = false;
 
     /**
-     * @param Client $client
+     * @param Redis $client
      */
-    public function __construct(Client $client)
+    public function __construct(Redis $client)
     {
         $this->client = $client;
     }
@@ -58,10 +58,10 @@ class Redis implements StorageAdapterInterface
      * @param  array $keys
      * @return bool
      */
-    public function bond(array $keys): bool
+    public function saveHexastore(array $keys): bool
     {
         return ($this->client->zAdd(
-            self::BOND_INDEX,
+            self::RELATIONSHIP_INDEX,
             0,
             $keys[0],
             0,
@@ -77,27 +77,38 @@ class Redis implements StorageAdapterInterface
         ) === 6);
     }
 
-    public function loadBonds(string $hexKey): array
+    public function queryHexastore(string $query, ? int $start = null, ? int $size = null): array
     {
-        throw new \BadMethodCallException('Not yet implemented');
+        return $this->client->zRangeByLex(
+            self::RELATIONSHIP_INDEX,
+            "[{$query}",
+            "[{$query}\xff",
+            $start,
+            $size
+        );
     }
 
-    public function isIsInTransaction()
+    public function saveEdge(string $key, string $edgeKey): bool
     {
-        return $this->isInTransaction;
+        return $this->client->set($key, $edgeKey);
+    }
+
+    public function isInTransaction(): bool
+    {
+        return $this->inTransaction;
     }
 
     public function beginTransaction()
     {
-        $this->isInTransaction = true;
+        $this->inTransaction = true;
 
-        return $this->client->multi();
+        $this->client->multi();
     }
 
     public function commit()
     {
         $result = $this->client->exec();
-        $this->isInTransaction = false;
+        $this->inTransaction = false;
 
         return $result;
     }
@@ -105,6 +116,6 @@ class Redis implements StorageAdapterInterface
     public function discard()
     {
         $this->client->discard();
-        $this->isInTransaction = false;
+        $this->inTransaction = false;
     }
 }

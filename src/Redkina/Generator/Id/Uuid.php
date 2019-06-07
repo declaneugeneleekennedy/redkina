@@ -1,7 +1,8 @@
 <?php
 
-namespace DevDeclan\Redkina\IdGenerator;
+namespace DevDeclan\Redkina\Generator\Id;
 
+use DevDeclan\Redkina\Generator\IdInterface;
 use Ramsey\Uuid\Uuid as U;
 
 /**
@@ -9,7 +10,7 @@ use Ramsey\Uuid\Uuid as U;
  *
  * @package DevDeclan\Redkina\IdGenerator
  */
-class Uuid
+class Uuid implements IdInterface
 {
     /**
      * @return string

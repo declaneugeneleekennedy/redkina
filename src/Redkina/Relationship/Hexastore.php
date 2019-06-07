@@ -2,6 +2,8 @@
 
 namespace DevDeclan\Redkina\Relationship;
 
+use InvalidArgumentException;
+
 class Hexastore
 {
     const SUBJECT = 's';
@@ -46,5 +48,14 @@ class Hexastore
         }
 
         return $keys;
+    }
+
+    /**
+     * @param string $ordering
+     * @return string
+     */
+    public function getQuery(string $ordering = 'spo'): string
+    {
+        return (new HexKey($this->relationship))->format($ordering);
     }
 }

@@ -1,13 +1,13 @@
 <?php
 
-namespace DevDeclan\Redkina;
+namespace DevDeclan\Redkina\Generator;
 
 /**
  * Defines the contract for ID generators
  *
  * @package DevDeclan\Redkina
  */
-interface IdGeneratorInterface
+interface IdInterface
 {
     /**
      * @return string

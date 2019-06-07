@@ -4,6 +4,9 @@ namespace DevDeclan\Redkina\Relationship;
 
 use InvalidArgumentException;
 
+/**
+ * @package DevDeclan\Redkina\Relationship
+ */
 class HexKey
 {
     /**
@@ -12,15 +15,34 @@ class HexKey
     const ORDERING_REGEX = '/^[spo]{1}[spo]{1}[spo]{1}$/i';
 
     /**
+     * Delimiter for the 4 parts of a hex key
+     */
+    const HEX_KEY_DELIMITER = ':';
+
+    /**
+     * Delimiter for the entity and ID keys of a hex key
+     */
+    const ENTITY_KEY_DELIMITER = '.';
+
+    /**
      * @var Relationship
      */
     protected $relationship;
 
+    /**
+     * @param Relationship $relationship
+     */
     public function __construct(Relationship $relationship)
     {
         $this->relationship = $relationship;
     }
 
+    /**
+     * Outputs a hexastore key with the provided ordering
+     *
+     * @param string $ordering
+     * @return string
+     */
     public function format(string $ordering): string
     {
         if (strlen($ordering) !== 3) {
@@ -47,15 +69,25 @@ class HexKey
              */
             $target = ($char === 's') ? $this->relationship->getSubject() : $this->relationship->getObject();
 
-            $parts[] = $target->getName() . '.' . $target->getId();
+            if (is_null($target)) {
+                $parts[] = '';
+            } else {
+                $parts[] = $target->getName() . self::ENTITY_KEY_DELIMITER . $target->getId();
+            }
         }
 
-        return implode(':', $parts);
+        return implode(self::HEX_KEY_DELIMITER, $parts);
     }
 
+    /**
+     * Will reconstitute a relationship object from a hexastore key
+     *
+     * @param string $key
+     * @return Relationship
+     */
     public static function hydrate(string $key)
     {
-        $parts = explode(':', $key);
+        $parts = explode(self::HEX_KEY_DELIMITER, $key);
 
         if (count($parts) !== 4) {
             throw new InvalidArgumentException('Hex key could not be parsed: ' . $key);
@@ -77,7 +109,7 @@ class HexKey
                 continue;
             }
 
-            $targetParts = explode('.', $target);
+            $targetParts = explode(self::ENTITY_KEY_DELIMITER, $target);
 
             if (count($targetParts) !== 2) {
                 throw new InvalidArgumentException('Malformed reference in hex key: ' . $target);

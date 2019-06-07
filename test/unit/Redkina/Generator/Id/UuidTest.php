@@ -1,8 +1,8 @@
 <?php
 
-namespace IdGenerator;
+namespace DevDeclan\Test\Unit\Redkina\Generator\Id;
 
-use DevDeclan\Redkina\IdGenerator\Uuid;
+use DevDeclan\Redkina\Generator\Id\Uuid;
 use PHPUnit\Framework\TestCase;
 
 class UuidTest extends TestCase
