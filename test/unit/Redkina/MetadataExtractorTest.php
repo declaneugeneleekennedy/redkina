@@ -4,6 +4,7 @@ namespace DevDeclan\Test\Unit\Redkina;
 
 use DevDeclan\Redkina\Metadata\Entity as EntityMetadata;
 use DevDeclan\Redkina\Metadata\Property\Generic;
+use DevDeclan\Redkina\Metadata\Property\Id;
 use DevDeclan\Redkina\Metadata\Property\Integer;
 use DevDeclan\Redkina\Metadata\Property\Timestamp;
 use DevDeclan\Redkina\MetadataExtractor;
@@ -41,7 +42,7 @@ class MetadataExtractorTest extends TestCase
         $this->assertEquals('Person', $metadata->getName());
         $this->assertEquals(Person::class, $metadata->getClassName());
 
-        $this->assertInstanceOf(Generic::class, $metadata->getProperty('id'));
+        $this->assertInstanceOf(Id::class, $metadata->getProperty('id'));
         $this->assertInstanceOf(Generic::class, $metadata->getProperty('firstName'));
         $this->assertInstanceOf(Generic::class, $metadata->getProperty('lastName'));
 

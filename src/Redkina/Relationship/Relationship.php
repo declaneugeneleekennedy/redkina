@@ -20,23 +20,23 @@ class Relationship
     protected $predicate;
 
     /**
-     * @var object|null
+     * @var Connectable
      */
-    protected $edge = null;
+    protected $edge;
 
     /**
-     * @return object|null
+     * @return Connectable|null
      */
-    public function getEdge(): ? object
+    public function getEdge(): ? Connectable
     {
         return $this->edge;
     }
 
     /**
-     * @param object|null $edge
+     * @param Connectable|null $edge
      * @return Relationship
      */
-    public function setEdge(? object $edge): Relationship
+    public function setEdge(? Connectable $edge): Relationship
     {
         $this->edge = $edge;
         return $this;
@@ -68,6 +68,9 @@ class Relationship
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function hasSubject(): bool
     {
         return !(empty($this->subject));
@@ -91,6 +94,9 @@ class Relationship
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function hasObject(): bool
     {
         return !(empty($this->object));
@@ -114,13 +120,11 @@ class Relationship
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function hasPredicate(): bool
     {
         return !(empty($this->predicate));
-    }
-
-    public static function factory(object $subjectEntity, string $predicate, object $objectEntity): object
-    {
-
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace DevDeclan\Redkina\Generator\Id;
+namespace DevDeclan\Redkina\Storage\Generator\Id;
 
-use DevDeclan\Redkina\Generator\IdInterface;
+use DevDeclan\Redkina\Storage\Generator\IdInterface;
 use Ramsey\Uuid\Uuid as U;
 
 /**

@@ -2,15 +2,20 @@
 
 namespace DevDeclan\Redkina\Metadata\Property;
 
-use DevDeclan\Redkina\MapperInterface;
-use DevDeclan\Redkina\Mapper\Property\Integer as Mapper;
 use DevDeclan\Redkina\Metadata\PropertyInterface;
 use DevDeclan\Redkina\MetadataInterface;
+use DevDeclan\Redkina\Storage\Serializer\Scalar;
+use DevDeclan\Redkina\Storage\Unserializer\Number;
 
 class Integer implements MetadataInterface, PropertyInterface
 {
-    public function getMapper(): MapperInterface
+    public function getSerializer()
     {
-        return new Mapper();
+        return Scalar::class;
+    }
+
+    public function getUnserializer()
+    {
+        return Number::class;
     }
 }

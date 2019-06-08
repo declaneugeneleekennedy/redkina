@@ -26,7 +26,7 @@ class Movie
 
     /**
      * @var array
-     * @Redkina\Property\Relationship(
+     * @Redkina\Relationship(
      *     entityTypes = {"Actor"},
      *     predicate = "appeared_in"
      * )
@@ -35,7 +35,7 @@ class Movie
 
     /**
      * @var array
-     * @Redkina\Property\Relationship(
+     * @Redkina\Relationship(
      *     entityTypes = {"Actor"},
      *     predicate = "directed"
      * )

@@ -2,15 +2,12 @@
 
 namespace DevDeclan\Redkina\Storage\Manager;
 
-use DevDeclan\Redkina\Generator\IdInterface;
-use DevDeclan\Redkina\Generator\KeyInterface;
-use DevDeclan\Redkina\Mapper\Entity as EntityMapper;
-use DevDeclan\Redkina\RegistryInterface;
-use DevDeclan\Redkina\Relationship\Connectable;
 use DevDeclan\Redkina\Relationship\Hexastore;
 use DevDeclan\Redkina\Relationship\HexKey;
 use DevDeclan\Redkina\Relationship\Relationship;
 use DevDeclan\Redkina\Storage\AdapterInterface;
+use DevDeclan\Redkina\Storage\Generator\IdInterface;
+use DevDeclan\Redkina\Storage\Generator\KeyInterface;
 use DevDeclan\Redkina\Storage\ManagerInterface;
 
 class Standard implements ManagerInterface
@@ -19,11 +16,6 @@ class Standard implements ManagerInterface
      * @var AdapterInterface
      */
     protected $adapter;
-
-    /**
-     * @var RegistryInterface
-     */
-    protected $registry;
 
     /**
      * @var IdInterface
@@ -37,20 +29,18 @@ class Standard implements ManagerInterface
 
     public function __construct(
         AdapterInterface $adapter,
-        RegistryInterface $registry,
         IdInterface $idGenerator,
         KeyInterface $keyGenerator
     ) {
         $this->adapter = $adapter;
-        $this->registry = $registry;
         $this->idGenerator = $idGenerator;
         $this->keyGenerator = $keyGenerator;
     }
 
-    public function load(string $className, string $id): ? object
+    public function load(string $entityName, string $id): ? array
     {
         $key = $this->keyGenerator->generate(
-            $this->registry->getEntityName($className),
+            $entityName,
             $id
         );
 
@@ -60,40 +50,20 @@ class Standard implements ManagerInterface
             return null;
         }
 
-        $metadata = $this->registry->getClassMetadata($className);
-        $mapper = new EntityMapper($metadata);
-
-        return $mapper->out($data);
+        return $data;
     }
 
-    public function save(object $entity): object
+    public function save(string $entityName, array $data): ? array
     {
-        if (!$entity->getId()) {
-            return $this->insert($entity);
+        if (empty($data['id'])) {
+            return $this->insert($entityName, $data);
         }
 
-        return $this->update($entity);
+        return $this->update($entityName, $data);
     }
 
-    public function loadRelationships(object $subjectEntity, string $predicate = '*', string $className = null): array
+    public function loadRelationships(Relationship $relationship): array
     {
-        $relationship = new Relationship();
-
-        $subject = (new Connectable())
-            ->setId($subjectEntity->getId())
-            ->setName($this->registry->getEntityName($subjectEntity));
-
-        $relationship
-            ->setSubject($subject)
-            ->setPredicate($predicate);
-
-        if ($className) {
-            $object = (new Connectable())
-                ->setName($this->registry->getEntityName($className));
-
-            $relationship->setObject($object);
-        }
-
         $query = (new Hexastore($relationship))->getQuery();
 
         $keys = $this->adapter->queryHexastore($query);
@@ -107,21 +77,8 @@ class Standard implements ManagerInterface
         return $relationships;
     }
 
-    public function saveRelationship(object $subjectEntity, string $predicate, object $objectEntity): object
+    public function saveRelationship(Relationship $relationship): object
     {
-        $subject = (new Connectable())
-            ->setId($subjectEntity->getId())
-            ->setName($this->registry->getEntityName(get_class($subjectEntity)));
-
-        $object = (new Connectable())
-            ->setId($objectEntity->getId())
-            ->setName($this->registry->getEntityName(get_class($objectEntity)));
-
-        $relationship = (new Relationship())
-            ->setSubject($subject)
-            ->setPredicate($predicate)
-            ->setObject($object);
-
         $this->adapter->beginTransaction();
 
         $keys = (new Hexastore($relationship))->getKeys();
@@ -132,7 +89,7 @@ class Standard implements ManagerInterface
             $edge = $relationship->getEdge();
 
             $edgeKey = $this->keyGenerator->generate(
-                $this->registry->getEntityName($edge),
+                $edge->getName(),
                 $edge->getId()
             );
 
@@ -146,35 +103,20 @@ class Standard implements ManagerInterface
         return $relationship;
     }
 
-    /**
-     * @param  object $entity
-     * @return object|null
-     * @throws \Exception
-     */
-    protected function insert(object $entity): ? object
+    protected function insert(string $entityName, array $data): ? array
     {
-        $entity->setId($this->idGenerator->generate());
+        $data['id'] = $this->idGenerator->generate();
 
-        return $this->update($entity);
+        return $this->update($entityName, $data);
     }
 
-    /**
-     * @param  object $entity
-     * @return object|null
-     */
-    protected function update(object $entity): ? object
+    protected function update(string $entityName, array $data): ? array
     {
-        $entityMetadata = $this->registry->getClassMetadata(get_class($entity));
-
-        $mapper = new EntityMapper($entityMetadata);
-
-        $data = $mapper->in($entity);
-
         $key = $this->keyGenerator->generate(
-            $this->registry->getEntityName(get_class($entity)),
-            $entity->getId()
+            $entityName,
+            $data['id']
         );
 
-        return $this->adapter->save($key, $data) ? $entity : null;
+        return $this->adapter->save($key, $data) ? $data : null;
     }
 }

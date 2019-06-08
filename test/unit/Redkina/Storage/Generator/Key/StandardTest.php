@@ -1,8 +1,8 @@
 <?php
 
-namespace DevDeclan\Test\Unit\Redkina\Generator\Key;
+namespace DevDeclan\Test\Unit\Redkina\Storage\Generator\Key;
 
-use DevDeclan\Redkina\Generator\Key\Standard;
+use DevDeclan\Redkina\Storage\Generator\Key\Standard;
 use PHPUnit\Framework\TestCase;
 
 class StandardTest extends TestCase

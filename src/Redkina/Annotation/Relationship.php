@@ -1,17 +1,16 @@
 <?php
 
-namespace DevDeclan\Redkina\Annotation\Property;
+namespace DevDeclan\Redkina\Annotation;
 
 use DevDeclan\Redkina\AnnotationInterface;
-use DevDeclan\Redkina\Annotation\PropertyInterface;
-use Doctrine\Common\Annotations\Annotation;
 
 /**
  * @package DevDeclan\Redkina\Annotation\Property
  *
  * @Annotation
+ * @Target("PROPERTY")
  */
-class Relationship implements AnnotationInterface, PropertyInterface
+class Relationship implements AnnotationInterface
 {
     /**
      * @var array

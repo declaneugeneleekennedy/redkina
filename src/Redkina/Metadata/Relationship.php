@@ -1,16 +1,13 @@
 <?php
 
-namespace DevDeclan\Redkina\Metadata\Property;
+namespace DevDeclan\Redkina\Metadata;
 
-use DevDeclan\Redkina\MapperInterface;
-use DevDeclan\Redkina\Metadata\PropertyInterface;
 use DevDeclan\Redkina\MetadataInterface;
-use DevDeclan\Redkina\Mapper\Property\Generic as Mapper;
 
 /**
- * @package DevDeclan\Redkina\Metadata\Property
+ * @package DevDeclan\Redkina\Metadata
  */
-class Relationship implements MetadataInterface, PropertyInterface
+class Relationship implements MetadataInterface
 {
     /**
      * @var array
@@ -68,11 +65,13 @@ class Relationship implements MetadataInterface, PropertyInterface
         return $this;
     }
 
-    /**
-     * @return MapperInterface
-     */
-    public function getMapper(): MapperInterface
+    public function getSerializer()
     {
-        return new Mapper();
+        // TODO: Implement getSerializer() method.
+    }
+
+    public function getUnserializer()
+    {
+        // TODO: Implement getUnserializer() method.
     }
 }

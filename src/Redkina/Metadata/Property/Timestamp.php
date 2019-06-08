@@ -2,15 +2,20 @@
 
 namespace DevDeclan\Redkina\Metadata\Property;
 
-use DevDeclan\Redkina\Mapper\Property\Timestamp as Mapper;
-use DevDeclan\Redkina\MapperInterface;
 use DevDeclan\Redkina\Metadata\PropertyInterface;
 use DevDeclan\Redkina\MetadataInterface;
+use DevDeclan\Redkina\Storage\Serializer\DateTime;
+use DevDeclan\Redkina\Storage\Unserializer\ISO8601;
 
 class Timestamp implements MetadataInterface, PropertyInterface
 {
-    public function getMapper(): MapperInterface
+    public function getSerializer()
     {
-        return new Mapper();
+        return DateTime::class;
+    }
+
+    public function getUnserializer()
+    {
+        return ISO8601::class;
     }
 }

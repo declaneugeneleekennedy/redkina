@@ -3,17 +3,16 @@
 
 namespace DevDeclan\Test\Unit\Redkina\Storage\Manager;
 
-use DevDeclan\Redkina\Storage\Manager\Standard;
 use DateTime;
-use DevDeclan\Redkina\Generator\IdInterface;
-use DevDeclan\Redkina\Generator\Key\Standard as KeyGenerator;
 use DevDeclan\Redkina\Metadata\Entity as EntityMetadata;
 use DevDeclan\Redkina\Metadata\Property\Generic as GenericMetadata;
 use DevDeclan\Redkina\Metadata\Property\Integer as IntegerMetadata;
 use DevDeclan\Redkina\Metadata\Property\Timestamp as TimestampMetadata;
 use DevDeclan\Redkina\RegistryInterface;
-use DevDeclan\Redkina\Repository;
 use DevDeclan\Redkina\Storage\AdapterInterface;
+use DevDeclan\Redkina\Storage\Generator\IdInterface;
+use DevDeclan\Redkina\Storage\Generator\Key\Standard as KeyGenerator;
+use DevDeclan\Redkina\Storage\Manager\Standard;
 use PHPUnit\Framework\TestCase;
 
 class StandardTest extends TestCase
@@ -38,83 +37,8 @@ class StandardTest extends TestCase
         'time' => '2019-06-02T01:29:11+00:00',
     ];
 
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $entity = new class() {
-            protected $id;
-            protected $name;
-            protected $num;
-            protected $time;
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function setId(string $id)
-            {
-                $this->id = $id;
-
-                return $this;
-            }
-
-            public function getName()
-            {
-                return $this->name;
-            }
-
-            public function setName(string $name)
-            {
-                $this->name = $name;
-
-                return $this;
-            }
-
-            public function getNum()
-            {
-                return $this->num;
-            }
-
-
-            public function setNum($num)
-            {
-                $this->num = $num;
-                return $this;
-            }
-
-            public function getTime()
-            {
-                return $this->time;
-            }
-
-            public function setTime($time)
-            {
-                $this->time = $time;
-                return $this;
-            }
-        };
-
-        $this->className = get_class($entity);
-
-        $this->entityMetadata = (new EntityMetadata())
-            ->setName('Foo')
-            ->setClassName($this->className)
-            ->addProperty('id', new GenericMetadata())
-            ->addProperty('name', new GenericMetadata())
-            ->addProperty('num', new IntegerMetadata())
-            ->addProperty('time', new TimestampMetadata());
-    }
-
     public function testHappyPathLoad()
     {
-        $registry = $this->prophesize(RegistryInterface::class);
-
-        $registry->getEntityName($this->className)->willReturn('Foo');
-        $registry->getClassName('Foo')->willReturn($this->className);
-        $registry->getClassMetadata($this->className)->willReturn($this->entityMetadata);
-
         $storage = $this->prophesize(AdapterInterface::class);
 
         $storage->load('Foo.this-is-not-a-real-uuid-oh')->willReturn($this->fooData);
@@ -123,22 +47,15 @@ class StandardTest extends TestCase
 
         $repo = new Standard(
             $storage->reveal(),
-            $registry->reveal(),
             $generator->reveal(),
             new KeyGenerator()
         );
 
-        $this->assertInstanceOf($this->className, $repo->load($this->className, 'this-is-not-a-real-uuid-oh'));
+        $this->assertEquals($this->fooData, $repo->load('Foo', 'this-is-not-a-real-uuid-oh'));
     }
 
     public function testLoadKeyNotFound()
     {
-        $registry = $this->prophesize(RegistryInterface::class);
-
-        $registry->getEntityName($this->className)->willReturn('Foo');
-        $registry->getClassName('Foo')->willReturn($this->className);
-        $registry->getClassMetadata($this->className)->willReturn($this->entityMetadata);
-
         $storage = $this->prophesize(AdapterInterface::class);
 
         $storage->load('Foo.this-is-not-a-real-uuid-oh')->willReturn(null);
@@ -147,30 +64,15 @@ class StandardTest extends TestCase
 
         $repo = new Standard(
             $storage->reveal(),
-            $registry->reveal(),
             $generator->reveal(),
             new KeyGenerator()
         );
 
-        $this->assertNull($repo->load($this->className, 'this-is-not-a-real-uuid-oh'));
+        $this->assertNull($repo->load('Foo', 'this-is-not-a-real-uuid-oh'));
     }
 
     public function testHappyPathSaveCreate()
     {
-        $cn = $this->className;
-        $entity = new $cn('Foo');
-
-        $entity
-            ->setName($this->fooData['name'])
-            ->setNum((int)$this->fooData['num'])
-            ->setTime(new DateTime($this->fooData['time']));
-
-        $registry = $this->prophesize(RegistryInterface::class);
-
-        $registry->getEntityName($this->className)->willReturn('Foo');
-        $registry->getClassName('Foo')->willReturn($this->className);
-        $registry->getClassMetadata($this->className)->willReturn($this->entityMetadata);
-
         $storage = $this->prophesize(AdapterInterface::class);
 
         $storage->save('Foo.this-is-not-a-real-uuid-oh', $this->fooData)->willReturn(true);
@@ -181,31 +83,18 @@ class StandardTest extends TestCase
 
         $repo = new Standard(
             $storage->reveal(),
-            $registry->reveal(),
             $generator->reveal(),
             new KeyGenerator()
         );
 
-        $this->assertInstanceOf($this->className, $repo->save($entity));
+        $data = $this->fooData;
+        unset($data['id']);
+
+        $this->assertEquals($this->fooData, $repo->save('Foo', $this->fooData));
     }
 
     public function testHappyPathSaveUpdate()
     {
-        $cn = $this->className;
-        $entity = new $cn('Foo');
-
-        $entity
-            ->setId($this->fooData['id'])
-            ->setName($this->fooData['name'])
-            ->setNum((int)$this->fooData['num'])
-            ->setTime(new DateTime($this->fooData['time']));
-
-        $registry = $this->prophesize(RegistryInterface::class);
-
-        $registry->getEntityName($this->className)->willReturn('Foo');
-        $registry->getClassName('Foo')->willReturn($this->className);
-        $registry->getClassMetadata($this->className)->willReturn($this->entityMetadata);
-
         $storage = $this->prophesize(AdapterInterface::class);
 
         $storage->save('Foo.this-is-not-a-real-uuid-oh', $this->fooData)->willReturn(true);
@@ -214,11 +103,10 @@ class StandardTest extends TestCase
 
         $repo = new Standard(
             $storage->reveal(),
-            $registry->reveal(),
             $generator->reveal(),
             new KeyGenerator()
         );
 
-        $this->assertInstanceOf($this->className, $repo->save($entity));
+        $this->assertEquals($this->fooData, $repo->save('Foo', $this->fooData));
     }
 }

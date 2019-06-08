@@ -4,7 +4,7 @@ namespace DevDeclan\Redkina\Metadata;
 
 use DevDeclan\Redkina\MetadataInterface;
 
-class Entity
+class Entity implements MetadataInterface
 {
     /**
      * @var string
@@ -20,6 +20,8 @@ class Entity
      * @var array
      */
     protected $properties = [];
+
+    protected $relationships = [];
 
     /**
      * @return string
@@ -58,7 +60,7 @@ class Entity
     }
 
     /**
-     * @return array
+     * @return PropertyInterface[]
      */
     public function getProperties(): array
     {
@@ -67,10 +69,10 @@ class Entity
 
     /**
      * @param  string            $name
-     * @param  MetadataInterface $property
+     * @param  PropertyInterface $property
      * @return Entity
      */
-    public function addProperty(string $name, MetadataInterface $property): self
+    public function addProperty(string $name, PropertyInterface $property): self
     {
         $this->properties[$name] = $property;
 
@@ -84,5 +86,12 @@ class Entity
     public function getProperty(string $name): ? PropertyInterface
     {
         return $this->properties[$name] ?? null;
+    }
+
+    public function getRelationshipProperties(): array
+    {
+        return array_filter($this->getProperties(), function ($property) {
+            return (is_a($property, Relationship::class));
+        });
     }
 }

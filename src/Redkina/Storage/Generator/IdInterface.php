@@ -1,6 +1,6 @@
 <?php
 
-namespace DevDeclan\Redkina\Generator;
+namespace DevDeclan\Redkina\Storage\Generator;
 
 /**
  * Defines the contract for ID generators

@@ -1,8 +1,8 @@
 <?php
 
-namespace DevDeclan\Redkina\Generator\Key;
+namespace DevDeclan\Redkina\Storage\Generator\Key;
 
-use DevDeclan\Redkina\Generator\KeyInterface;
+use DevDeclan\Redkina\Storage\Generator\KeyInterface;
 
 class Standard implements KeyInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace DevDeclan\Test\Unit\Redkina\StorageAdapter;
+namespace DevDeclan\Test\Unit\Redkina\Storage\Adapter;
 
 use PHPUnit\Framework\TestCase;
 use DevDeclan\Redkina\Storage\Adapter\PhpRedis;

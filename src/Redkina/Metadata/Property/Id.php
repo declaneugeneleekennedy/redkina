@@ -7,7 +7,7 @@ use DevDeclan\Redkina\MetadataInterface;
 use DevDeclan\Redkina\Storage\Serializer\Scalar;
 use DevDeclan\Redkina\Storage\Unserializer\PassThrough;
 
-class Generic implements MetadataInterface, PropertyInterface
+class Id implements MetadataInterface, PropertyInterface
 {
     public function getSerializer()
     {

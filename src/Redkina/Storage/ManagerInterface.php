@@ -2,10 +2,12 @@
 
 namespace DevDeclan\Redkina\Storage;
 
+use DevDeclan\Redkina\Relationship\Relationship;
+
 interface ManagerInterface
 {
-    public function load(string $className, string $id): ? object;
-    public function save(object $entity): ? object;
-    public function loadRelationships(object $subjectEntity, string $predicate, string $className = null): array;
-    public function saveRelationship(object $subjectEntity, string $predicate, object $objectEntity): object;
+    public function load(string $entityName, string $id): ? array;
+    public function save(string $entityName, array $data): ? array;
+    public function loadRelationships(Relationship $relationship): array;
+    public function saveRelationship(Relationship $relationship): object;
 }
