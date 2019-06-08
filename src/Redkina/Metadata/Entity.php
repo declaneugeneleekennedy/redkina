@@ -21,6 +21,9 @@ class Entity implements MetadataInterface
      */
     protected $properties = [];
 
+    /**
+     * @var array
+     */
     protected $relationships = [];
 
     /**
@@ -88,10 +91,23 @@ class Entity implements MetadataInterface
         return $this->properties[$name] ?? null;
     }
 
-    public function getRelationshipProperties(): array
+    /**
+     * @return array
+     */
+    public function getRelationships(): array
     {
-        return array_filter($this->getProperties(), function ($property) {
-            return (is_a($property, Relationship::class));
-        });
+        return $this->relationships;
+    }
+
+    /**
+     * @param string $mapsTo
+     * @param Relationship $relationship
+     * @return Entity
+     */
+    public function addRelationship(string $mapsTo, Relationship $relationship): Entity
+    {
+        $this->relationships[$mapsTo] = $relationship;
+
+        return $this;
     }
 }

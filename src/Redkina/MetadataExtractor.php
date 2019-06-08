@@ -2,9 +2,8 @@
 
 namespace DevDeclan\Redkina;
 
-use DevDeclan\Redkina\Annotation\Entity;
-use DevDeclan\Redkina\Annotation\PropertyInterface;
-use DevDeclan\Redkina\Metadata\Entity as EntityMetadata;
+use DevDeclan\Redkina\Annotation;
+use DevDeclan\Redkina\Metadata;
 use Doctrine\Common\Annotations\AnnotationReader;
 use ReflectionClass;
 use ReflectionProperty;
@@ -33,9 +32,9 @@ class MetadataExtractor
 
     /**
      * @param ReflectionClass $reflectionClass
-     * @return EntityMetadata|null
+     * @return Metadata\Entity|null
      */
-    public function extract(ReflectionClass $reflectionClass): ? EntityMetadata
+    public function extract(ReflectionClass $reflectionClass): ? Metadata\Entity
     {
         $entityMetadata = $this->extractEntity($reflectionClass);
 
@@ -53,17 +52,23 @@ class MetadataExtractor
             $entityMetadata->addProperty($property, $metadata);
         }
 
+        $relationships = $this->extractRelationships($reflectionClass);
+
+        foreach ($relationships as $mapsTo => $relationship) {
+            $entityMetadata->addRelationship($mapsTo, $relationship);
+        }
+
         return $entityMetadata;
     }
 
     /**
      * @param ReflectionClass $reflectionClass
-     * @return Entity|null
+     * @return Annotation\Entity|null
      */
-    protected function getEntityAnnotation(ReflectionClass $reflectionClass): ? Entity
+    protected function getEntityAnnotation(ReflectionClass $reflectionClass): ? Annotation\Entity
     {
         foreach ($this->annotationReader->getClassAnnotations($reflectionClass) as $annotation) {
-            if (is_a($annotation, Entity::class)) {
+            if (is_a($annotation, Annotation\Entity::class)) {
                 return $annotation;
             }
         }
@@ -73,9 +78,9 @@ class MetadataExtractor
 
     /**
      * @param ReflectionClass $reflectionClass
-     * @return EntityMetadata|null
+     * @return Metadata\Entity|null
      */
-    protected function extractEntity(ReflectionClass $reflectionClass): ? EntityMetadata
+    protected function extractEntity(ReflectionClass $reflectionClass): ? Metadata\Entity
     {
         $entityAnnotation = $this->getEntityAnnotation($reflectionClass);
 
@@ -83,9 +88,27 @@ class MetadataExtractor
             return null;
         }
 
-        return (new EntityMetadata())
+        return (new Metadata\Entity())
             ->setName($entityAnnotation->getName())
             ->setClassName($reflectionClass->getName());
+    }
+
+    protected function extractRelationships(ReflectionClass $reflectionClass): array
+    {
+        $relationships = [];
+
+        foreach ($reflectionClass->getProperties() as $property) {
+            foreach ($this->annotationReader->getPropertyAnnotations($property) as $annotation) {
+                if (is_a($annotation, Annotation\Relationship::class)) {
+                    $relationships[$property->getName()] = new Metadata\Relationship(
+                        $annotation->getEntityTypes(),
+                        $annotation->getPredicate()
+                    );
+                }
+            }
+        }
+
+        return $relationships;
     }
 
     /**
@@ -104,14 +127,14 @@ class MetadataExtractor
 
     /**
      * @param ReflectionProperty $property
-     * @return \DevDeclan\Redkina\Metadata\PropertyInterface|null
+     * @return Metadata\PropertyInterface|null
      */
     protected function extractProperty(ReflectionProperty $property)
     {
         $propertyAnnotations = $this->annotationReader->getPropertyAnnotations($property);
 
         foreach ($propertyAnnotations as $annotation) {
-            if (is_a($annotation, PropertyInterface::class)) {
+            if (is_a($annotation, Annotation\PropertyInterface::class)) {
                 return $this->propertyMetadataFactory->getByAnnotation($annotation);
             }
         }

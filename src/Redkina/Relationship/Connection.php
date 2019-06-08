@@ -13,6 +13,17 @@ class Connection implements ArrayAccess
     protected $repository;
 
     /**
+     * @var Relationship
+     */
+    protected $relationship;
+
+    public function __construct(Repository $repository, Relationship $relationship)
+    {
+        $this->repository = $repository;
+        $this->relationship = $relationship;
+    }
+
+    /**
      * Whether a offset exists
      * @link https://php.net/manual/en/arrayaccess.offsetexists.php
      * @param mixed $offset <p>

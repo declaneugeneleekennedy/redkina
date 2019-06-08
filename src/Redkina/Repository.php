@@ -62,6 +62,10 @@ class Repository
             }
         }
 
+        foreach ($metadata->getRelationships() as $mapsTo => $relationship) {
+
+        }
+
         return $entity;
     }
 

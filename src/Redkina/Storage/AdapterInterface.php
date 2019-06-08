@@ -34,7 +34,7 @@ interface AdapterInterface
      */
     public function saveHexastore(array $keys): bool;
 
-    public function queryHexastore(string $hexKey): array;
+    public function queryHexastore(string $hexKey, int $offset = 0, int $size = 10): array;
 
     public function saveEdge(string $key, string $edgeKey): bool;
 

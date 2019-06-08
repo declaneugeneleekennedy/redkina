@@ -62,11 +62,11 @@ class Standard implements ManagerInterface
         return $this->update($entityName, $data);
     }
 
-    public function loadRelationships(Relationship $relationship): array
+    public function loadRelationships(Relationship $relationship, int $offset = 0, int $size = 10): array
     {
         $query = (new Hexastore($relationship))->getQuery();
 
-        $keys = $this->adapter->queryHexastore($query);
+        $keys = $this->adapter->queryHexastore($query, $offset, $size);
 
         $relationships = [];
 

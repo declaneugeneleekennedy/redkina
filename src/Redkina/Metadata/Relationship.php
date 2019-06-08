@@ -64,14 +64,4 @@ class Relationship implements MetadataInterface
         $this->predicate = $predicate;
         return $this;
     }
-
-    public function getSerializer()
-    {
-        // TODO: Implement getSerializer() method.
-    }
-
-    public function getUnserializer()
-    {
-        // TODO: Implement getUnserializer() method.
-    }
 }
