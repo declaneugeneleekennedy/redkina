@@ -54,6 +54,11 @@ class PhpRedis implements AdapterInterface
         return $this->client->hMSet($key, $data);
     }
 
+    public function delete(string $key): bool
+    {
+        return ($this->client->del($key) === 1);
+    }
+
     /**
      * @param  array $keys
      * @return bool

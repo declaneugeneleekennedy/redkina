@@ -13,28 +13,41 @@ use DevDeclan\Redkina\AnnotationInterface;
 class Relationship implements AnnotationInterface
 {
     /**
-     * @var array
-     */
-    public $entityTypes = [];
-
-    /**
      * @var string
      */
     public $predicate;
 
     /**
-     * @return array
+     * @var string
      */
-    public function getEntityTypes(): array
+    public $role;
+
+    /**
+     * @var string
+     */
+    public $entityType;
+
+    /**
+     * @return string
+     */
+    public function getPredicate(): string
     {
-        return $this->entityTypes;
+        return $this->predicate;
     }
 
     /**
      * @return string|null
      */
-    public function getPredicate(): ? string
+    public function getRole(): ? string
     {
-        return $this->predicate;
+        return $this->role;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEntityType(): ? string
+    {
+        return $this->entityType;
     }
 }

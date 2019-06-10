@@ -2,12 +2,12 @@
 
 namespace DevDeclan\Redkina\Storage\Manager;
 
-use DevDeclan\Redkina\Relationship\Hexastore;
-use DevDeclan\Redkina\Relationship\HexKey;
-use DevDeclan\Redkina\Relationship\Relationship;
+use DevDeclan\Redkina\Storage\Triple;
 use DevDeclan\Redkina\Storage\AdapterInterface;
 use DevDeclan\Redkina\Storage\Generator\IdInterface;
 use DevDeclan\Redkina\Storage\Generator\KeyInterface;
+use DevDeclan\Redkina\Storage\TripleSet;
+use DevDeclan\Redkina\Storage\TripleKey;
 use DevDeclan\Redkina\Storage\ManagerInterface;
 
 class Standard implements ManagerInterface
@@ -62,26 +62,31 @@ class Standard implements ManagerInterface
         return $this->update($entityName, $data);
     }
 
-    public function loadRelationships(Relationship $relationship, int $offset = 0, int $size = 10): array
+    public function delete(string $entityName, string $id): bool
     {
-        $query = (new Hexastore($relationship))->getQuery();
+        return $this->adapter->delete($this->keyGenerator->generate($entityName, $id));
+    }
+
+    public function loadRelationships(Triple $relationship, int $offset = 0, int $size = 10): array
+    {
+        $query = (new TripleSet($relationship))->getQuery();
 
         $keys = $this->adapter->queryHexastore($query, $offset, $size);
 
         $relationships = [];
 
         foreach ($keys as $key) {
-            $relationships[] = HexKey::hydrate($key);
+            $relationships[] = TripleKey::hydrate($key);
         }
 
         return $relationships;
     }
 
-    public function saveRelationship(Relationship $relationship): object
+    public function saveRelationship(Triple $relationship): object
     {
         $this->adapter->beginTransaction();
 
-        $keys = (new Hexastore($relationship))->getKeys();
+        $keys = (new TripleSet($relationship))->getKeys();
 
         $this->adapter->saveHexastore($keys);
 

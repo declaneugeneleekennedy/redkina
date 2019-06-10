@@ -26,6 +26,8 @@ interface AdapterInterface
      */
     public function save(string $key, array $data): bool;
 
+    public function delete(string $key): bool;
+
     /**
      * Add a hexastore which defines a relationship to a ZSET
      *

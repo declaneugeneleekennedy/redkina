@@ -1,16 +1,16 @@
 <?php
 
-namespace DevDeclan\Redkina\Relationship;
+namespace DevDeclan\Redkina\Storage;
 
-class Relationship
+class Triple
 {
     /**
-     * @var Connectable
+     * @var TripleEntity
      */
     protected $subject;
 
     /**
-     * @var Connectable
+     * @var TripleEntity
      */
     protected $object;
 
@@ -20,23 +20,23 @@ class Relationship
     protected $predicate;
 
     /**
-     * @var Connectable
+     * @var TripleEntity
      */
     protected $edge;
 
     /**
-     * @return Connectable|null
+     * @return TripleEntity|null
      */
-    public function getEdge(): ? Connectable
+    public function getEdge(): ? TripleEntity
     {
         return $this->edge;
     }
 
     /**
-     * @param Connectable|null $edge
-     * @return Relationship
+     * @param TripleEntity|null $edge
+     * @return Triple
      */
-    public function setEdge(? Connectable $edge): Relationship
+    public function setEdge(? TripleEntity $edge): Triple
     {
         $this->edge = $edge;
         return $this;
@@ -51,18 +51,18 @@ class Relationship
     }
 
     /**
-     * @return Connectable|null
+     * @return TripleEntity|null
      */
-    public function getSubject(): ? Connectable
+    public function getSubject(): ? TripleEntity
     {
         return $this->subject;
     }
 
     /**
-     * @param Connectable $subject
-     * @return Relationship
+     * @param TripleEntity $subject
+     * @return Triple
      */
-    public function setSubject(Connectable $subject): Relationship
+    public function setSubject(TripleEntity $subject): Triple
     {
         $this->subject = $subject;
         return $this;
@@ -77,18 +77,18 @@ class Relationship
     }
 
     /**
-     * @return Connectable|null
+     * @return TripleEntity|null
      */
-    public function getObject(): ? Connectable
+    public function getObject(): ? TripleEntity
     {
         return $this->object;
     }
 
     /**
-     * @param Connectable $object
-     * @return Relationship
+     * @param TripleEntity $object
+     * @return Triple
      */
-    public function setObject(Connectable $object): Relationship
+    public function setObject(TripleEntity $object): Triple
     {
         $this->object = $object;
         return $this;
@@ -112,9 +112,9 @@ class Relationship
 
     /**
      * @param string $predicate
-     * @return Relationship
+     * @return Triple
      */
-    public function setPredicate(string $predicate): Relationship
+    public function setPredicate(string $predicate): Triple
     {
         $this->predicate = $predicate;
         return $this;

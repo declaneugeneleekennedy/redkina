@@ -99,10 +99,12 @@ class MetadataExtractor
 
         foreach ($reflectionClass->getProperties() as $property) {
             foreach ($this->annotationReader->getPropertyAnnotations($property) as $annotation) {
+                /** @var $annotation Annotation\Relationship */
                 if (is_a($annotation, Annotation\Relationship::class)) {
                     $relationships[$property->getName()] = new Metadata\Relationship(
-                        $annotation->getEntityTypes(),
-                        $annotation->getPredicate()
+                        $annotation->getPredicate(),
+                        $annotation->getRole(),
+                        $annotation->getEntityType()
                     );
                 }
             }

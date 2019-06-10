@@ -3,13 +3,22 @@
 namespace DevDeclan\Redkina\Metadata;
 
 use DevDeclan\Redkina\MetadataInterface;
+use Doctrine\Common\Annotations\Annotation;
 
+/**
+ * Model annotation handler
+ *
+ * @package DevDeclan\Redkina\Annotation
+ *
+ * @Annotation
+ * @Target("CLASS")
+ */
 class Entity implements MetadataInterface
 {
     /**
      * @var string
      */
-    protected $name;
+    public $name;
 
     /**
      * @var string
@@ -17,12 +26,12 @@ class Entity implements MetadataInterface
     protected $className;
 
     /**
-     * @var array
+     * @var PropertyInterface[]
      */
     protected $properties = [];
 
     /**
-     * @var array
+     * @var Relationship[]
      */
     protected $relationships = [];
 
@@ -92,7 +101,7 @@ class Entity implements MetadataInterface
     }
 
     /**
-     * @return array
+     * @return Relationship[]
      */
     public function getRelationships(): array
     {

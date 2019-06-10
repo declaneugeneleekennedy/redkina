@@ -10,9 +10,19 @@ use DevDeclan\Redkina\MetadataInterface;
 class Relationship implements MetadataInterface
 {
     /**
-     * @var array
+     * @var string
      */
-    protected $entityTypes = [];
+    const ROLE_SUBJECT = 'subject';
+
+    /**
+     * @var string
+     */
+    const ROLE_OBJECT = 'object';
+
+    /**
+     * @var string
+     */
+    protected $role;
 
     /**
      * @var string
@@ -20,37 +30,26 @@ class Relationship implements MetadataInterface
     protected $predicate;
 
     /**
-     * @param array $entityTypes
+     * @var string
+     */
+    protected $entityType;
+
+    /**
      * @param string $predicate
+     * @param string|null $role
+     * @param string|null $entityType
      */
-    public function __construct(array $entityTypes, ? string $predicate = null)
+    public function __construct(string $predicate, ?string $role = null, ?string $entityType = null)
     {
-        $this->entityTypes = $entityTypes;
         $this->predicate = $predicate;
-    }
-
-    /**
-     * @return array
-     */
-    public function getEntityTypes(): array
-    {
-        return $this->entityTypes;
-    }
-
-    /**
-     * @param array $entityTypes
-     * @return Relationship
-     */
-    public function setEntityTypes(array $entityTypes): Relationship
-    {
-        $this->entityTypes = $entityTypes;
-        return $this;
+        $this->role = $role ?? self::ROLE_SUBJECT;
+        $this->entityType = $entityType;
     }
 
     /**
      * @return string
      */
-    public function getPredicate(): string
+    public function getPredicate(): ? string
     {
         return $this->predicate;
     }
@@ -62,6 +61,24 @@ class Relationship implements MetadataInterface
     public function setPredicate(string $predicate): Relationship
     {
         $this->predicate = $predicate;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEntityType(): ? string
+    {
+        return $this->entityType;
+    }
+
+    /**
+     * @param string $entityType
+     * @return Relationship
+     */
+    public function setEntityType(string $entityType): Relationship
+    {
+        $this->entityType = $entityType;
         return $this;
     }
 }

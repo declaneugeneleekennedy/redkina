@@ -1,13 +1,13 @@
 <?php
 
-namespace DevDeclan\Redkina\Relationship;
+namespace DevDeclan\Redkina\Storage;
 
 use InvalidArgumentException;
 
 /**
  * @package DevDeclan\Redkina\Relationship
  */
-class HexKey
+class TripleKey
 {
     /**
      * Regex to test that an ordering is exactly 3 characters and only includes s, p, and o
@@ -25,14 +25,14 @@ class HexKey
     const ENTITY_KEY_DELIMITER = '.';
 
     /**
-     * @var Relationship
+     * @var Triple
      */
     protected $relationship;
 
     /**
-     * @param Relationship $relationship
+     * @param Triple $relationship
      */
-    public function __construct(Relationship $relationship)
+    public function __construct(Triple $relationship)
     {
         $this->relationship = $relationship;
     }
@@ -65,7 +65,7 @@ class HexKey
             }
 
             /**
-             * @var Connectable $target
+             * @var TripleEntity $target
              */
             $target = ($char === 's') ? $this->relationship->getSubject() : $this->relationship->getObject();
 
@@ -83,7 +83,7 @@ class HexKey
      * Will reconstitute a relationship object from a hexastore key
      *
      * @param string $key
-     * @return Relationship
+     * @return Triple
      */
     public static function hydrate(string $key)
     {
@@ -98,7 +98,7 @@ class HexKey
             throw new InvalidArgumentException('Invalid ordering string: ' . $ordering);
         }
 
-        $relationship = new Relationship();
+        $relationship = new Triple();
 
         for ($i = 0; $i < 3; ++$i) {
             $char = substr($ordering, $i, 1);
@@ -115,9 +115,7 @@ class HexKey
                 throw new InvalidArgumentException('Malformed reference in hex key: ' . $target);
             }
 
-            $connectable = (new Connectable())
-                ->setName($targetParts[0])
-                ->setId($targetParts[1]);
+            $connectable = new TripleEntity($targetParts[0], $targetParts[1]);
 
             $method = ($char === 's') ? 'setSubject' : 'setObject';
             $relationship->$method($connectable);

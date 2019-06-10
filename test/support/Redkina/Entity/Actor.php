@@ -38,35 +38,26 @@ class Actor
      * @var array
      *
      * @Redkina\Relationship(
-     *     entityTypes = {"Movie"},
+     *     entityType = "Movie",
      *     predicate = "appeared_in"
      * )
      */
-    protected $appearedIn;
+    protected $appearedIn = [];
 
     /**
      * @var array
      *
      * @Redkina\Relationship(
-     *     entityTypes = {"Movie"},
+     *     entityType = "Movie",
      *     predicate = "directed"
      * )
      */
-    protected $directed;
+    protected $directed = [];
 
     /**
-     * @var array
-     *
-     * @Redkina\Relationship(
-     *     entityTypes = {"Movie"}
-     * )
+     * @return string|null
      */
-    protected $movies;
-
-    /**
-     * @return string
-     */
-    public function getId(): string
+    public function getId(): ? string
     {
         return $this->id;
     }

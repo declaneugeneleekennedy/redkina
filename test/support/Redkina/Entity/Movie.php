@@ -27,8 +27,9 @@ class Movie
     /**
      * @var array
      * @Redkina\Relationship(
-     *     entityTypes = {"Actor"},
-     *     predicate = "appeared_in"
+     *     predicate = "appeared_in",
+     *     role = "object",
+     *     entityType = "Actor"
      * )
      */
     protected $actors;
@@ -36,16 +37,17 @@ class Movie
     /**
      * @var array
      * @Redkina\Relationship(
-     *     entityTypes = {"Actor"},
-     *     predicate = "directed"
+     *     predicate = "directed",
+     *     role = "object",
+     *     entityType = "Actor"
      * )
      */
     protected $directors;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getId(): string
+    public function getId(): ? string
     {
         return $this->id;
     }

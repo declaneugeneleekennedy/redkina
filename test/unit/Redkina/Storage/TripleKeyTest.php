@@ -1,13 +1,13 @@
 <?php
 
-namespace DevDeclan\Test\Unit\Redkina\Relationship;
+namespace DevDeclan\Test\Unit\Redkina\Storage;
 
-use DevDeclan\Redkina\Relationship\HexKey;
-use DevDeclan\Redkina\Relationship\Relationship;
-use DevDeclan\Test\Unit\Redkina\HexTestCase;
+use DevDeclan\Redkina\Storage\Triple;
+use DevDeclan\Redkina\Storage\TripleKey;
+use DevDeclan\Test\Unit\Redkina\TripleTestCase;
 use InvalidArgumentException;
 
-class HexKeyTest extends HexTestCase
+class TripleKeyTest extends TripleTestCase
 {
     public function formatHappyPathProvider()
     {
@@ -26,14 +26,14 @@ class HexKeyTest extends HexTestCase
      */
     public function testFormatHappyPath(string $ordering, string $expect)
     {
-        $hexKey = new HexKey($this->happyPathRelationship);
+        $hexKey = new TripleKey($this->happyPathRelationship);
 
         $this->assertEquals($expect, $hexKey->format($ordering));
     }
 
     public function testFormatOrderingTooShort()
     {
-        $hexKey = new HexKey(new Relationship());
+        $hexKey = new TripleKey(new Triple());
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Ordering string length is less than 3');
@@ -43,7 +43,7 @@ class HexKeyTest extends HexTestCase
 
     public function testFormatOrderingFunkyCharacters()
     {
-        $hexKey = new HexKey(new Relationship());
+        $hexKey = new TripleKey(new Triple());
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid ordering string: pow');
@@ -64,7 +64,7 @@ class HexKeyTest extends HexTestCase
      */
     public function testHydrateHappyPath(string $key)
     {
-        $this->assertEquals($this->happyPathRelationship, HexKey::hydrate($key));
+        $this->assertEquals($this->happyPathRelationship, TripleKey::hydrate($key));
     }
 
     public function testHydrateBadSegmentCount()
@@ -72,7 +72,7 @@ class HexKeyTest extends HexTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Hex key could not be parsed: this is not even close to being correct');
 
-        HexKey::hydrate('this is not even close to being correct');
+        TripleKey::hydrate('this is not even close to being correct');
     }
 
     public function testHydrateOrderingFunkyCharacters()
@@ -80,7 +80,7 @@ class HexKeyTest extends HexTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid ordering string: pow');
 
-        HexKey::hydrate('pow:Foo.123:is_admirer_of:Bar.321');
+        TripleKey::hydrate('pow:Foo.123:is_admirer_of:Bar.321');
     }
 
     public function testHydrateWithBadEntityReference()
@@ -88,6 +88,6 @@ class HexKeyTest extends HexTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Malformed reference in hex key: Mangled');
 
-        HexKey::hydrate('spo:Foo.123:is_admirer_of:Mangled');
+        TripleKey::hydrate('spo:Foo.123:is_admirer_of:Mangled');
     }
 }

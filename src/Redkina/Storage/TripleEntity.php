@@ -1,8 +1,8 @@
 <?php
 
-namespace DevDeclan\Redkina\Relationship;
+namespace DevDeclan\Redkina\Storage;
 
-class Connectable
+class TripleEntity
 {
     /**
      * @var string
@@ -15,18 +15,28 @@ class Connectable
     protected $name;
 
     /**
-     * @return string|null
+     * @param string $name
+     * @param string $id
      */
-    public function getId(): ? string
+    public function __construct(string $name, string $id)
+    {
+        $this->name = $name;
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
     {
         return $this->id;
     }
 
     /**
      * @param string $id
-     * @return Connectable
+     * @return TripleEntity
      */
-    public function setId(string $id): Connectable
+    public function setId(string $id): TripleEntity
     {
         $this->id = $id;
         return $this;
@@ -42,18 +52,11 @@ class Connectable
 
     /**
      * @param string $name
-     * @return Connectable
+     * @return TripleEntity
      */
-    public function setName(string $name): Connectable
+    public function setName(string $name): TripleEntity
     {
         $this->name = $name;
         return $this;
-    }
-
-    public static function factory(string $name, string $id)
-    {
-        return (new self())
-            ->setName($name)
-            ->setId($id);
     }
 }

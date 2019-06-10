@@ -2,9 +2,9 @@
 
 namespace DevDeclan\Redkina;
 
-use DevDeclan\Redkina\Relationship\Connectable;
-use DevDeclan\Redkina\Relationship\Relationship;
 use DevDeclan\Redkina\Storage\ManagerInterface;
+use DevDeclan\Redkina\Storage\Triple;
+use DevDeclan\Redkina\Storage\TripleEntity;
 use DevDeclan\Redkina\Storage\SerializerInterface;
 use DevDeclan\Redkina\Storage\UnserializerInterface;
 
@@ -55,15 +55,19 @@ class Repository
         $entity = new $className();
 
         foreach ($metadata->getProperties() as $name => $property) {
-            $unserializer = $property->getUnserializer();
+            $value = $this->unserializeProperty($property->getUnserializer(), $data[$name]);
 
-            if (class_exists($unserializer)) {
-                $this->setEntityProperty($entity, $name, $this->unserializeProperty($unserializer, $data[$name]));
-            }
+            $this->setEntityProperty($entity, $name, $value);
         }
 
-        foreach ($metadata->getRelationships() as $mapsTo => $relationship) {
+        foreach ($metadata->getRelationships() as $mapsTo => $relationshipMetadata) {
+            $relatedEntities = $this->loadRelatedEntities(
+                $entity,
+                $relationshipMetadata->getRole(),
+                $relationshipMetadata->getPredicate()
+            );
 
+            $this->setEntityProperty($entity, $mapsTo, $relatedEntities);
         }
 
         return $entity;
@@ -94,36 +98,98 @@ class Repository
             return null;
         }
 
-        return $this->setEntityProperty($entity, 'id', $result['id']);
+        $entity = $this->setEntityProperty($entity, 'id', $result['id']);
+
+        foreach ($metadata->getRelationships() as $mapsTo => $relationshipMetadata) {
+            $value = $this->getEntityProperty($entity, $mapsTo);
+
+            if (!$value) {
+                continue;
+            }
+
+            foreach ($value as $related) {
+                $this->saveRelatedEntity($entity, $relationshipMetadata->getPredicate(), $related);
+            }
+        }
+
+        return $entity;
     }
 
-    public function loadRelationships(object $entity, string $predicate = '*'): array
+    public function delete(object $entity): bool
     {
-        $subject = (new Connectable())
-            ->setName($this->registry->getEntityName(get_class($entity)))
-            ->setId($entity->getId());
+        return $this->manager->delete($this->registry->getEntityName(get_class($entity)), $entity->getId());
+    }
 
-        $relationship = (new Relationship())
-            ->setSubject($subject)
+    public function loadRelatedEntities(object $entity, string $role, string $predicate): array
+    {
+        $target = new TripleEntity($this->registry->getEntityName(get_class($entity)), $entity->getId());
+
+        $targetMethod = 'set' . ucfirst($role);
+
+        $query = (new Triple())
+            ->$targetMethod($target)
             ->setPredicate($predicate);
 
-        return $this->manager->loadRelationships($relationship);
+        /** @var Triple[] $relationships */
+        $relationships = $this->manager->loadRelationships($query);
+
+        $results = [];
+
+        foreach ($relationships as $relationship) {
+            $object = $relationship->getObject();
+
+            $related = $this->load(
+                $this->registry->getClassName($object->getName()),
+                $object->getId()
+            );
+
+            if (!$related) {
+                continue;
+            }
+
+            $relatedEntity = new RelatedEntity($predicate, $related);
+
+            $edge = $relationship->getEdge();
+
+            if ($edge) {
+                $relatedEntity->setEdge($edge);
+            }
+
+            $results[] = $relatedEntity;
+        }
+
+        return $results;
     }
 
-    public function saveRelationship(object $subjectEntity, string $predicate, object $objectEntity): object
-    {
-        $subject = (new Connectable())
-            ->setName($this->registry->getEntityName(get_class($subjectEntity)))
-            ->setId($subjectEntity->getId());
+    public function saveRelatedEntity(
+        object $subjectEntity,
+        string $predicate,
+        object $objectEntity,
+        ? object $edgeEntity = null
+    ): object {
+        $subject = new TripleEntity(
+            $this->registry->getEntityName(get_class($subjectEntity)),
+            $subjectEntity->getId()
+        );
 
-        $object = (new Connectable())
-            ->setName($this->registry->getEntityName(get_class($objectEntity)))
-            ->setId($objectEntity->getId());
+        $object = new TripleEntity(
+            $this->registry->getEntityName(get_class($objectEntity)),
+            $objectEntity->getId()
+        );
 
-        $relationship = (new Relationship())
+        $relationship = (new Triple())
             ->setSubject($subject)
-            ->setPredicate($predicate)
-            ->setObject($object);
+            ->setObject($object)
+            ->setPredicate($predicate);
+
+        if ($edgeEntity) {
+            $edge = new TripleEntity(
+                $this->registry->getEntityName($edgeEntity),
+                $edgeEntity->getId()
+            );
+
+            $relationship->setEdge($edge);
+        }
 
         return $this->manager->saveRelationship($relationship);
     }

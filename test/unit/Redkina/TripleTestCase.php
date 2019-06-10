@@ -2,11 +2,11 @@
 
 namespace DevDeclan\Test\Unit\Redkina;
 
-use DevDeclan\Redkina\Relationship\Connectable;
-use DevDeclan\Redkina\Relationship\Relationship;
+use DevDeclan\Redkina\Storage\Triple;
+use DevDeclan\Redkina\Storage\TripleEntity;
 use PHPUnit\Framework\TestCase;
 
-abstract class HexTestCase extends TestCase
+abstract class TripleTestCase extends TestCase
 {
     protected $orderings = [
         'spo',
@@ -32,13 +32,9 @@ abstract class HexTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->happyPathRelationship = (new Relationship())
-            ->setSubject((new Connectable())
-                ->setName('Foo')
-                ->setId('123'))
+        $this->happyPathRelationship = (new Triple())
+            ->setSubject(new TripleEntity('Foo', '123'))
             ->setPredicate('is_admirer_of')
-            ->setObject((new Connectable())
-                ->setName('Bar')
-                ->setId('321'));
+            ->setObject(new TripleEntity('Bar', '321'));
     }
 }
