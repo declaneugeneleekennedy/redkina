@@ -34,7 +34,7 @@ class MetadataExtractor
      * @param ReflectionClass $reflectionClass
      * @return Metadata\Entity|null
      */
-    public function extract(ReflectionClass $reflectionClass): ? Metadata\Entity
+    public function extract(ReflectionClass $reflectionClass): ?Metadata\Entity
     {
         $entityMetadata = $this->extractEntity($reflectionClass);
 
@@ -65,7 +65,7 @@ class MetadataExtractor
      * @param ReflectionClass $reflectionClass
      * @return Annotation\Entity|null
      */
-    protected function getEntityAnnotation(ReflectionClass $reflectionClass): ? Annotation\Entity
+    protected function getEntityAnnotation(ReflectionClass $reflectionClass): ?Annotation\Entity
     {
         foreach ($this->annotationReader->getClassAnnotations($reflectionClass) as $annotation) {
             if (is_a($annotation, Annotation\Entity::class)) {
@@ -80,7 +80,7 @@ class MetadataExtractor
      * @param ReflectionClass $reflectionClass
      * @return Metadata\Entity|null
      */
-    protected function extractEntity(ReflectionClass $reflectionClass): ? Metadata\Entity
+    protected function extractEntity(ReflectionClass $reflectionClass): ?Metadata\Entity
     {
         $entityAnnotation = $this->getEntityAnnotation($reflectionClass);
 

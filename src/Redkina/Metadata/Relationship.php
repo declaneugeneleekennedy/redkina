@@ -41,15 +41,16 @@ class Relationship implements MetadataInterface
      */
     public function __construct(string $predicate, ?string $role = null, ?string $entityType = null)
     {
-        $this->predicate = $predicate;
-        $this->role = $role ?? self::ROLE_SUBJECT;
-        $this->entityType = $entityType;
+        $this
+            ->setPredicate($predicate)
+            ->setRole($role ?? self::ROLE_SUBJECT)
+            ->setEntityType($entityType);
     }
 
     /**
      * @return string
      */
-    public function getPredicate(): ? string
+    public function getPredicate(): string
     {
         return $this->predicate;
     }
@@ -85,7 +86,7 @@ class Relationship implements MetadataInterface
     /**
      * @return string|null
      */
-    public function getEntityType(): ? string
+    public function getEntityType(): ?string
     {
         return $this->entityType;
     }

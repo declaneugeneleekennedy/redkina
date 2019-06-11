@@ -15,7 +15,7 @@ interface AdapterInterface
      * @param  string $key
      * @return array|null
      */
-    public function load(string $key): ? array;
+    public function load(string $key): ?array;
 
     /**
      * Save a hashed object

@@ -89,7 +89,7 @@ class Registry implements RegistryInterface
      * @param string $className
      * @return EntityMetadata|null
      */
-    public function getClassMetadata(string $className): ? EntityMetadata
+    public function getClassMetadata(string $className): ?EntityMetadata
     {
         return $this->classes[$className] ?? null;
     }
@@ -98,7 +98,7 @@ class Registry implements RegistryInterface
      * @param string $entityName
      * @return EntityMetadata|null
      */
-    public function getEntityMetadata(string $entityName): ? EntityMetadata
+    public function getEntityMetadata(string $entityName): ?EntityMetadata
     {
         return $this->entities[$entityName] ?? null;
     }
@@ -107,7 +107,7 @@ class Registry implements RegistryInterface
      * @param  string $entityName
      * @return string|null
      */
-    public function getClassName(string $entityName): ? string
+    public function getClassName(string $entityName): ?string
     {
         $metadata = $this->getEntityMetadata($entityName);
 
@@ -118,7 +118,7 @@ class Registry implements RegistryInterface
      * @param  string $className
      * @return string|null
      */
-    public function getEntityName(string $className): ? string
+    public function getEntityName(string $className): ?string
     {
         $metadata = $this->getClassMetadata($className);
 

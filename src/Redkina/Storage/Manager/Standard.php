@@ -38,7 +38,7 @@ class Standard implements ManagerInterface
         $this->keyGenerator = $keyGenerator;
     }
 
-    public function load(string $entityName, string $id): ? array
+    public function load(string $entityName, string $id): ?array
     {
         $key = $this->keyGenerator->generate(
             $entityName,
@@ -54,7 +54,7 @@ class Standard implements ManagerInterface
         return $data;
     }
 
-    public function save(string $entityName, array $data): ? array
+    public function save(string $entityName, array $data): ?array
     {
         if (empty($data['id'])) {
             return $this->insert($entityName, $data);
@@ -114,14 +114,14 @@ class Standard implements ManagerInterface
         return $relationship;
     }
 
-    protected function insert(string $entityName, array $data): ? array
+    protected function insert(string $entityName, array $data): ?array
     {
         $data['id'] = $this->idGenerator->generate();
 
         return $this->update($entityName, $data);
     }
 
-    protected function update(string $entityName, array $data): ? array
+    protected function update(string $entityName, array $data): ?array
     {
         $key = $this->keyGenerator->generate(
             $entityName,

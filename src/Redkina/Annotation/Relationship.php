@@ -38,7 +38,7 @@ class Relationship implements AnnotationInterface
     /**
      * @return string|null
      */
-    public function getRole(): ? string
+    public function getRole(): ?string
     {
         return $this->role;
     }
@@ -46,7 +46,7 @@ class Relationship implements AnnotationInterface
     /**
      * @return string|null
      */
-    public function getEntityType(): ? string
+    public function getEntityType(): ?string
     {
         return $this->entityType;
     }

@@ -26,9 +26,10 @@ class RelatedEntity
      */
     public function __construct(string $predicate, object $entity, ?object $edge = null)
     {
-        $this->predicate = $predicate;
-        $this->edge = $edge;
-        $this->entity = $entity;
+        $this
+            ->setPredicate($predicate)
+            ->setEntity($entity)
+            ->setEdge($edge);
     }
 
     /**

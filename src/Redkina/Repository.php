@@ -43,7 +43,7 @@ class Repository
      * @param bool $preloadRelated
      * @return bool|object
      */
-    public function load(string $className, string $id, bool $preloadRelated = true): ? object
+    public function load(string $className, string $id, bool $preloadRelated = true): ?object
     {
         $metadata = $this->registry->getEntityMetadata($this->registry->getEntityName($className));
 
@@ -82,7 +82,7 @@ class Repository
      * @return object|null
      * @throws \Exception
      */
-    public function save(object $entity): ? object
+    public function save(object $entity): ?object
     {
         $metadata = $this->registry->getEntityMetadata($this->registry->getEntityName(get_class($entity)));
 

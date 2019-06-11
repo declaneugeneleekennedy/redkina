@@ -27,7 +27,7 @@ class Triple
     /**
      * @return TripleEntity|null
      */
-    public function getEdge(): ? TripleEntity
+    public function getEdge(): ?TripleEntity
     {
         return $this->edge;
     }
@@ -53,7 +53,7 @@ class Triple
     /**
      * @return TripleEntity|null
      */
-    public function getSubject(): ? TripleEntity
+    public function getSubject(): ?TripleEntity
     {
         return $this->subject;
     }
@@ -79,7 +79,7 @@ class Triple
     /**
      * @return TripleEntity|null
      */
-    public function getObject(): ? TripleEntity
+    public function getObject(): ?TripleEntity
     {
         return $this->object;
     }
@@ -105,7 +105,7 @@ class Triple
     /**
      * @return string|null
      */
-    public function getPredicate(): ? string
+    public function getPredicate(): ?string
     {
         return $this->predicate;
     }

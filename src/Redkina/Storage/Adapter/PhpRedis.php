@@ -82,7 +82,7 @@ class PhpRedis implements AdapterInterface
         ) === 6);
     }
 
-    public function queryTripleStore(string $query, ? int $start = null, ? int $size = null): array
+    public function queryTripleStore(string $query, ?int $start = null, ?int $size = null): array
     {
         return $this->client->zRangeByLex(
             self::RELATIONSHIP_INDEX,
@@ -98,7 +98,7 @@ class PhpRedis implements AdapterInterface
         return $this->client->set($key, $edgeKey);
     }
 
-    public function loadEdge(string $key): ? string
+    public function loadEdge(string $key): ?string
     {
         return $this->client->get($key);
     }

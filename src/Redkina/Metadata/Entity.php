@@ -95,7 +95,7 @@ class Entity implements MetadataInterface
      * @param string $name
      * @return PropertyInterface|null
      */
-    public function getProperty(string $name): ? PropertyInterface
+    public function getProperty(string $name): ?PropertyInterface
     {
         return $this->properties[$name] ?? null;
     }
