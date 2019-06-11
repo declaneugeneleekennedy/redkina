@@ -22,12 +22,12 @@ class Relationship implements MetadataInterface
     /**
      * @var string
      */
-    protected $role;
+    protected $predicate;
 
     /**
      * @var string
      */
-    protected $predicate;
+    protected $role;
 
     /**
      * @var string
@@ -61,6 +61,24 @@ class Relationship implements MetadataInterface
     public function setPredicate(string $predicate): Relationship
     {
         $this->predicate = $predicate;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    /**
+     * @param string $role
+     * @return Relationship
+     */
+    public function setRole(string $role): Relationship
+    {
+        $this->role = $role;
         return $this;
     }
 

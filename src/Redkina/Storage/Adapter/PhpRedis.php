@@ -63,7 +63,7 @@ class PhpRedis implements AdapterInterface
      * @param  array $keys
      * @return bool
      */
-    public function saveHexastore(array $keys): bool
+    public function saveTripleSet(array $keys): bool
     {
         return ($this->client->zAdd(
             self::RELATIONSHIP_INDEX,
@@ -82,7 +82,7 @@ class PhpRedis implements AdapterInterface
         ) === 6);
     }
 
-    public function queryHexastore(string $query, ? int $start = null, ? int $size = null): array
+    public function queryTripleStore(string $query, ? int $start = null, ? int $size = null): array
     {
         return $this->client->zRangeByLex(
             self::RELATIONSHIP_INDEX,
@@ -96,6 +96,11 @@ class PhpRedis implements AdapterInterface
     public function saveEdge(string $key, string $edgeKey): bool
     {
         return $this->client->set($key, $edgeKey);
+    }
+
+    public function loadEdge(string $key): ? string
+    {
+        return $this->client->get($key);
     }
 
     public function isInTransaction(): bool

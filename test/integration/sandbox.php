@@ -14,6 +14,10 @@ use DevDeclan\Redkina\Storage\Manager\Standard;
 use DevDeclan\Test\Support\Redkina\Factory\RedkinaStore;
 use Doctrine\Common\Annotations\AnnotationReader;
 use League\FactoryMuffin\FactoryMuffin;
+use DevDeclan\Test\Support\Redkina\Entity\Actor;
+use DevDeclan\Test\Support\Redkina\Entity\Movie;
+use DevDeclan\Test\Support\Redkina\Entity\ActorMovieEdge;
+use DevDeclan\Redkina\RelatedEntity;
 
 AnnotationRegistry::registerLoader('class_exists');
 
@@ -39,3 +43,5 @@ $repository = new Repository($registry, $manager);
 $fm = new FactoryMuffin((new RedkinaStore())->setRepository($repository));
 
 $fm->loadFactories(__DIR__ . '/../support/Redkina/Factory/Definition');
+
+$movie = $repository->load(Movie::class, '4e479dfe-2aff-4eb3-9a78-752ce9c956b9');

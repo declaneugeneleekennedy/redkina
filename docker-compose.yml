@@ -8,9 +8,12 @@ services:
     entrypoint: tail -f /dev/null
     working_dir: /usr/src/redkina
     environment:
+      XDEBUG_CONFIG: remote_host=host.docker.internal
+      PHP_IDE_CONFIG: serverName=redkina.localhost
       COMPOSER_ALLOW_SUPERUSER: 1
     volumes:
       - .:/usr/src/redkina
+      - ./docker/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     networks:
       - redkina
   redis:

@@ -6,6 +6,7 @@ use DevDeclan\Redkina\Storage\Triple;
 use DevDeclan\Redkina\Storage\AdapterInterface;
 use DevDeclan\Redkina\Storage\Generator\IdInterface;
 use DevDeclan\Redkina\Storage\Generator\KeyInterface;
+use DevDeclan\Redkina\Storage\TripleEntity;
 use DevDeclan\Redkina\Storage\TripleSet;
 use DevDeclan\Redkina\Storage\TripleKey;
 use DevDeclan\Redkina\Storage\ManagerInterface;
@@ -71,24 +72,31 @@ class Standard implements ManagerInterface
     {
         $query = (new TripleSet($relationship))->getQuery();
 
-        $keys = $this->adapter->queryHexastore($query, $offset, $size);
+        $keys = $this->adapter->queryTripleStore($query, $offset, $size);
 
-        $relationships = [];
+        $triples = [];
 
         foreach ($keys as $key) {
-            $relationships[] = TripleKey::hydrate($key);
+            $triple = TripleKey::hydrate($key);
+
+            $edgeKey = $this->adapter->loadEdge($key);
+
+            if ($edgeKey) {
+                list($entityName, $id) = explode(TripleKey::ENTITY_KEY_DELIMITER, $edgeKey);
+                $triple->setEdge(new TripleEntity($entityName, $id));
+            }
+
+            $triples[] = $triple;
         }
 
-        return $relationships;
+        return $triples;
     }
 
     public function saveRelationship(Triple $relationship): object
     {
-        $this->adapter->beginTransaction();
-
         $keys = (new TripleSet($relationship))->getKeys();
 
-        $this->adapter->saveHexastore($keys);
+        $this->adapter->saveTripleSet($keys);
 
         if ($relationship->hasEdge()) {
             $edge = $relationship->getEdge();
@@ -102,8 +110,6 @@ class Standard implements ManagerInterface
                 $this->adapter->saveEdge($key, $edgeKey);
             }
         }
-
-        $this->adapter->commit();
 
         return $relationship;
     }

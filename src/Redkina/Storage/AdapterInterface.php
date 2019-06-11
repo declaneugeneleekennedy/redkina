@@ -34,10 +34,11 @@ interface AdapterInterface
      * @param  array $keys
      * @return bool
      */
-    public function saveHexastore(array $keys): bool;
+    public function saveTripleSet(array $keys): bool;
 
-    public function queryHexastore(string $hexKey, int $offset = 0, int $size = 10): array;
+    public function queryTripleStore(string $hexKey, int $offset = 0, int $size = 10): array;
 
+    public function loadEdge(string $key): ?string;
     public function saveEdge(string $key, string $edgeKey): bool;
 
     public function isInTransaction(): bool;

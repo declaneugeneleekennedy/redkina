@@ -58,7 +58,7 @@ class PhpRedisTest extends TestCase
 
         $this->assertEquals(
             6,
-            $redis->saveHexastore(
+            $redis->saveTripleSet(
                 [
                 'spo:Foo.11:is_nemesis_of:Bar.22',
                 'sop:Foo.11:Bar.22:is_nemesis_of',
@@ -81,7 +81,7 @@ class PhpRedisTest extends TestCase
 
         $redis = new PhpRedis($phpRedis->reveal());
 
-        $this->assertEquals(['spo:Foo.11:is_nemesis_of:Bar.22'], $redis->queryHexastore('spo:Foo.11:is_nemesis_of:'));
+        $this->assertEquals(['spo:Foo.11:is_nemesis_of:Bar.22'], $redis->queryTripleStore('spo:Foo.11:is_nemesis_of:'));
     }
 
     public function testThatTransactionsCanBeUsed()

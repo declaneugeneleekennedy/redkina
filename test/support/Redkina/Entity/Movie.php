@@ -32,7 +32,7 @@ class Movie
      *     entityType = "Actor"
      * )
      */
-    protected $actors;
+    protected $actors = [];
 
     /**
      * @var array
@@ -42,7 +42,7 @@ class Movie
      *     entityType = "Actor"
      * )
      */
-    protected $directors;
+    protected $directors = [];
 
     /**
      * @return string|null

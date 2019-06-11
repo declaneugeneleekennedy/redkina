@@ -2,6 +2,7 @@
 
 namespace DevDeclan\Redkina;
 
+use DevDeclan\Redkina\Metadata\Relationship;
 use DevDeclan\Redkina\Storage\ManagerInterface;
 use DevDeclan\Redkina\Storage\Triple;
 use DevDeclan\Redkina\Storage\TripleEntity;
@@ -37,11 +38,12 @@ class Repository
     }
 
     /**
-     * @param  string $className
-     * @param  string $id
+     * @param string $className
+     * @param string $id
+     * @param bool $preloadRelated
      * @return bool|object
      */
-    public function load(string $className, string $id): ? object
+    public function load(string $className, string $id, bool $preloadRelated = true): ? object
     {
         $metadata = $this->registry->getEntityMetadata($this->registry->getEntityName($className));
 
@@ -60,14 +62,16 @@ class Repository
             $this->setEntityProperty($entity, $name, $value);
         }
 
-        foreach ($metadata->getRelationships() as $mapsTo => $relationshipMetadata) {
-            $relatedEntities = $this->loadRelatedEntities(
-                $entity,
-                $relationshipMetadata->getRole(),
-                $relationshipMetadata->getPredicate()
-            );
+        if ($preloadRelated) {
+            foreach ($metadata->getRelationships() as $mapsTo => $relationshipMetadata) {
+                $relatedEntities = $this->loadRelatedEntities(
+                    $entity,
+                    $relationshipMetadata->getRole(),
+                    $relationshipMetadata->getPredicate()
+                );
 
-            $this->setEntityProperty($entity, $mapsTo, $relatedEntities);
+                $this->setEntityProperty($entity, $mapsTo, $relatedEntities);
+            }
         }
 
         return $entity;
@@ -108,7 +112,7 @@ class Repository
             }
 
             foreach ($value as $related) {
-                $this->saveRelatedEntity($entity, $relationshipMetadata->getPredicate(), $related);
+                $this->saveRelatedEntity($entity, $related);
             }
         }
 
@@ -122,12 +126,12 @@ class Repository
 
     public function loadRelatedEntities(object $entity, string $role, string $predicate): array
     {
-        $target = new TripleEntity($this->registry->getEntityName(get_class($entity)), $entity->getId());
+        $queryTripleEntity = new TripleEntity($this->registry->getEntityName(get_class($entity)), $entity->getId());
 
-        $targetMethod = 'set' . ucfirst($role);
+        $setMethod = 'set' . ucfirst($role);
 
         $query = (new Triple())
-            ->$targetMethod($target)
+            ->$setMethod($queryTripleEntity)
             ->setPredicate($predicate);
 
         /** @var Triple[] $relationships */
@@ -136,11 +140,13 @@ class Repository
         $results = [];
 
         foreach ($relationships as $relationship) {
-            $object = $relationship->getObject();
+            $resultTripleEntity =  $role === Relationship::ROLE_SUBJECT ?
+                $relationship->getObject() : $relationship->getSubject();
 
             $related = $this->load(
-                $this->registry->getClassName($object->getName()),
-                $object->getId()
+                $this->registry->getClassName($resultTripleEntity->getName()),
+                $resultTripleEntity->getId(),
+                false
             );
 
             if (!$related) {
@@ -152,7 +158,13 @@ class Repository
             $edge = $relationship->getEdge();
 
             if ($edge) {
-                $relatedEntity->setEdge($edge);
+                $edgeEntity = $this->load(
+                    $this->registry->getClassName($edge->getName()),
+                    $edge->getId(),
+                    false
+                );
+
+                $relatedEntity->setEdge($edgeEntity);
             }
 
             $results[] = $relatedEntity;
@@ -163,10 +175,10 @@ class Repository
 
     public function saveRelatedEntity(
         object $subjectEntity,
-        string $predicate,
-        object $objectEntity,
-        ? object $edgeEntity = null
+        RelatedEntity $relatedEntity
     ): object {
+        $objectEntity = $relatedEntity->getEntity();
+
         $subject = new TripleEntity(
             $this->registry->getEntityName(get_class($subjectEntity)),
             $subjectEntity->getId()
@@ -180,11 +192,13 @@ class Repository
         $relationship = (new Triple())
             ->setSubject($subject)
             ->setObject($object)
-            ->setPredicate($predicate);
+            ->setPredicate($relatedEntity->getPredicate());
+
+        $edgeEntity = $relatedEntity->getEdge();
 
         if ($edgeEntity) {
             $edge = new TripleEntity(
-                $this->registry->getEntityName($edgeEntity),
+                $this->registry->getEntityName(get_class($edgeEntity)),
                 $edgeEntity->getId()
             );
 
