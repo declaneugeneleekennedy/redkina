@@ -3,6 +3,7 @@
 namespace DevDeclan\Test\Support\Redkina\Entity;
 
 use DevDeclan\Redkina\Annotation as Redkina;
+use DateTime;
 
 /**
  * @package DevDeclan\Test\Support\Redkina\Entity
@@ -23,6 +24,18 @@ class Movie
      * @Redkina\Property\Generic()
      */
     protected $title;
+
+    /**
+     * @var integer
+     * @Redkina\Property\Integer()
+     */
+    protected $runningTime;
+
+    /**
+     * @var DateTime
+     * @Redkina\Property\Timestamp()
+     */
+    protected $releaseDate;
 
     /**
      * @var array
@@ -77,6 +90,42 @@ class Movie
     public function setTitle(string $title): Movie
     {
         $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRunningTime(): int
+    {
+        return $this->runningTime;
+    }
+
+    /**
+     * @param int $runningTime
+     * @return Movie
+     */
+    public function setRunningTime(int $runningTime): Movie
+    {
+        $this->runningTime = $runningTime;
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getReleaseDate(): DateTime
+    {
+        return $this->releaseDate;
+    }
+
+    /**
+     * @param DateTime $releaseDate
+     * @return Movie
+     */
+    public function setReleaseDate(DateTime $releaseDate): Movie
+    {
+        $this->releaseDate = $releaseDate;
         return $this;
     }
 

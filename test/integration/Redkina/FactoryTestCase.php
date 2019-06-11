@@ -47,9 +47,11 @@ class FactoryTestCase extends TestCase
             new MetadataExtractor(new AnnotationReader(), new PropertyMetadataFactory())
         );
 
+        $redisUrl = getenv('REDIS_URL') ?: 'redis';
+
         $redis = new Redis();
 
-        $redis->connect('redis');
+        $redis->connect($redisUrl);
 
         $this->manager = new Standard(
             new PhpRedis($redis),
@@ -62,5 +64,14 @@ class FactoryTestCase extends TestCase
         $this->repository = new Repository($this->registry, $this->manager);
 
         $this->fm = new FactoryMuffin((new RedkinaStore())->setRepository($this->repository));
+
+        $this->fm->loadFactories(__DIR__ . '/../../support/Redkina/Factory/Definition');
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->fm->deleteSaved();
     }
 }

@@ -4,9 +4,9 @@
   "type": "library",
   "license": "MIT",
   "scripts": {
-    "test": "phpunit test/unit",
-    "coverage": "phpunit test/unit --coverage-html cover",
-    "coverage-xml": "phpunit test/unit --coverage-clover coverage.xml",
+    "test": "phpunit test",
+    "coverage": "phpunit test --coverage-html cover",
+    "coverage-xml": "phpunit test --coverage-clover coverage.xml",
     "lint": "phpcs --standard=PSR2 ./src ./test",
     "format": "phpcbf --standard=PSR2 ./src ./test",
     "shell": "psysh test/bootstrap.php"
@@ -18,7 +18,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "DevDeclan\\Test\\Integration\\Redkina\\": "./test/support/integration/Redkina",
+      "DevDeclan\\Test\\Integration\\Redkina\\": "./test/integration/Redkina",
       "DevDeclan\\Test\\Support\\Redkina\\": "./test/support/Redkina",
       "DevDeclan\\Test\\Unit\\Redkina\\": "./test/unit/Redkina"
     }

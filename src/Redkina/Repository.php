@@ -229,7 +229,7 @@ class Repository
         return $this->serializers[$className]->serialize($value);
     }
 
-    protected function unserializeProperty(string $className, $value): string
+    protected function unserializeProperty(string $className, string $value)
     {
         if (!array_key_exists($className, $this->unserializers)) {
             $this->unserializers[$className] = new $className();

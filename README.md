@@ -15,3 +15,9 @@ Install using composer:
 ```bash
 composer require devdeclan/redkina
 ```
+
+## Planned Roadmap
+
+* v0.1: Initial release with basic API
+* v0.2: Implement validation rules using metadata and [Respect](https://respect-validation.readthedocs.io/en/1.1/)
+* v0.3: Lazy-loading of related entities
