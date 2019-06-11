@@ -26,13 +26,16 @@ abstract class TripleTestCase extends TestCase
         'sop:Foo.123:Bar.321:is_admirer_of',
     ];
 
-    protected $happyPathRelationship;
+    /**
+     * @var Triple
+     */
+    protected $happyPathTriple;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->happyPathRelationship = (new Triple())
+        $this->happyPathTriple = (new Triple())
             ->setSubject(new TripleEntity('Foo', '123'))
             ->setPredicate('is_admirer_of')
             ->setObject(new TripleEntity('Bar', '321'));

@@ -34,6 +34,11 @@ class FactoryTestCase extends TestCase
     protected $repository;
 
     /**
+     * @var RedkinaStore
+     */
+    protected $store;
+
+    /**
      * @var FactoryMuffin
      */
     protected $fm;
@@ -63,7 +68,9 @@ class FactoryTestCase extends TestCase
 
         $this->repository = new Repository($this->registry, $this->manager);
 
-        $this->fm = new FactoryMuffin((new RedkinaStore())->setRepository($this->repository));
+        $this->store = (new RedkinaStore())->setRepository($this->repository);
+
+        $this->fm = new FactoryMuffin($this->store);
 
         $this->fm->loadFactories(__DIR__ . '/../../support/Redkina/Factory/Definition');
     }

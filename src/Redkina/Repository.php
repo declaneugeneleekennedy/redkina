@@ -57,20 +57,21 @@ class Repository
         $entity = new $className();
 
         foreach ($metadata->getProperties() as $name => $property) {
-            $value = $this->unserializeProperty($property->getUnserializer(), $data[$name]);
+            $value = $this->unserialize($property->getUnserializer(), $data[$name]);
 
-            $this->setEntityProperty($entity, $name, $value);
+            $this->setObjectProperty($entity, $name, $value);
         }
 
         if ($preloadRelated) {
             foreach ($metadata->getRelationships() as $mapsTo => $relationshipMetadata) {
                 $relatedEntities = $this->loadRelatedEntities(
                     $entity,
+                    $relationshipMetadata->getPredicate(),
                     $relationshipMetadata->getRole(),
-                    $relationshipMetadata->getPredicate()
+                    $relationshipMetadata->getEntityType()
                 );
 
-                $this->setEntityProperty($entity, $mapsTo, $relatedEntities);
+                $this->setObjectProperty($entity, $mapsTo, $relatedEntities);
             }
         }
 
@@ -92,7 +93,7 @@ class Repository
             $serializer = $property->getSerializer();
 
             if (class_exists($serializer)) {
-                $data[$name] = $this->serializeProperty($serializer, $this->getEntityProperty($entity, $name));
+                $data[$name] = $this->serialize($serializer, $this->getObjectProperty($entity, $name));
             }
         }
 
@@ -102,17 +103,17 @@ class Repository
             return null;
         }
 
-        $entity = $this->setEntityProperty($entity, 'id', $result['id']);
+        $entity = $this->setObjectProperty($entity, 'id', $result['id']);
 
         foreach ($metadata->getRelationships() as $mapsTo => $relationshipMetadata) {
-            $value = $this->getEntityProperty($entity, $mapsTo);
+            $value = $this->getObjectProperty($entity, $mapsTo);
 
             if (!$value) {
                 continue;
             }
 
             foreach ($value as $related) {
-                $this->saveRelatedEntity($entity, $related);
+                $this->saveRelatedEntity($entity, $relationshipMetadata, $related);
             }
         }
 
@@ -124,15 +125,34 @@ class Repository
         return $this->manager->delete($this->registry->getEntityName(get_class($entity)), $entity->getId());
     }
 
-    public function loadRelatedEntities(object $entity, string $role, string $predicate): array
-    {
-        $queryTripleEntity = new TripleEntity($this->registry->getEntityName(get_class($entity)), $entity->getId());
+    public function loadRelatedEntities(
+        object $entity,
+        string $predicate,
+        string $role,
+        ?string $entityType = null
+    ): array {
+        $isSubjectQuery = ($role === Relationship::ROLE_SUBJECT);
 
-        $setMethod = 'set' . ucfirst($role);
+        $queryTripleEntity = new TripleEntity(
+            $this->registry->getEntityName(get_class($entity)),
+            $entity->getId()
+        );
 
-        $query = (new Triple())
-            ->$setMethod($queryTripleEntity)
-            ->setPredicate($predicate);
+        $query = (new Triple())->setPredicate($predicate);
+
+        if ($isSubjectQuery) {
+            $query->setSubject($queryTripleEntity);
+        } else {
+            $query->setObject($queryTripleEntity);
+        }
+
+        if (!is_null($entityType)) {
+            if ($isSubjectQuery) {
+                $query->setObject(new TripleEntity($entityType));
+            } else {
+                $query->setSubject(new TripleEntity($entityType));
+            }
+        }
 
         /** @var Triple[] $relationships */
         $relationships = $this->manager->loadRelationships($query);
@@ -174,10 +194,17 @@ class Repository
     }
 
     public function saveRelatedEntity(
-        object $subjectEntity,
+        object $entity,
+        Metadata\Relationship $relationshipMetadata,
         RelatedEntity $relatedEntity
     ): object {
-        $objectEntity = $relatedEntity->getEntity();
+        if ($relationshipMetadata->getRole() === Relationship::ROLE_SUBJECT) {
+            $subjectEntity = $entity;
+            $objectEntity = $relatedEntity->getEntity();
+        } else {
+            $subjectEntity = $relatedEntity->getEntity();
+            $objectEntity = $entity;
+        }
 
         $subject = new TripleEntity(
             $this->registry->getEntityName(get_class($subjectEntity)),
@@ -208,19 +235,19 @@ class Repository
         return $this->manager->saveRelationship($relationship);
     }
 
-    protected function setEntityProperty(object $entity, string $name, $value): object
+    protected function setObjectProperty(object $entity, string $name, $value): object
     {
         $method = 'set' . ucfirst($name);
         return $entity->$method($value);
     }
 
-    protected function getEntityProperty(object $entity, string $name)
+    protected function getObjectProperty(object $entity, string $name)
     {
         $method = 'get' . ucfirst($name);
         return $entity->$method($name);
     }
 
-    protected function serializeProperty(string $className, $value): string
+    protected function serialize(string $className, $value): string
     {
         if (!array_key_exists($className, $this->serializers)) {
             $this->serializers[$className] = new $className();
@@ -229,7 +256,7 @@ class Repository
         return $this->serializers[$className]->serialize($value);
     }
 
-    protected function unserializeProperty(string $className, string $value)
+    protected function unserialize(string $className, string $value)
     {
         if (!array_key_exists($className, $this->unserializers)) {
             $this->unserializers[$className] = new $className();

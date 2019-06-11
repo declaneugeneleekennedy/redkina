@@ -45,4 +45,9 @@ class RedkinaStore extends ModelStore
     {
         return $this->repository->delete($model);
     }
+
+    public function safeDelete($model)
+    {
+        $i = array_search($model, $this->saved());
+    }
 }

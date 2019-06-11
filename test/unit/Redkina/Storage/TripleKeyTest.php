@@ -26,7 +26,7 @@ class TripleKeyTest extends TripleTestCase
      */
     public function testFormatHappyPath(string $ordering, string $expect)
     {
-        $hexKey = new TripleKey($this->happyPathRelationship);
+        $hexKey = new TripleKey($this->happyPathTriple);
 
         $this->assertEquals($expect, $hexKey->format($ordering));
     }
@@ -64,7 +64,7 @@ class TripleKeyTest extends TripleTestCase
      */
     public function testHydrateHappyPath(string $key)
     {
-        $this->assertEquals($this->happyPathRelationship, TripleKey::hydrate($key));
+        $this->assertEquals($this->happyPathTriple, TripleKey::hydrate($key));
     }
 
     public function testHydrateBadSegmentCount()

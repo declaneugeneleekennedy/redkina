@@ -18,7 +18,7 @@ class TripleEntity
      * @param string $name
      * @param string $id
      */
-    public function __construct(string $name, string $id)
+    public function __construct(string $name, string $id = '')
     {
         $this->name = $name;
         $this->id = $id;
@@ -48,15 +48,5 @@ class TripleEntity
     public function getName(): string
     {
         return $this->name;
-    }
-
-    /**
-     * @param string $name
-     * @return TripleEntity
-     */
-    public function setName(string $name): TripleEntity
-    {
-        $this->name = $name;
-        return $this;
     }
 }

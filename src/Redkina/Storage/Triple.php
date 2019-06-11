@@ -36,7 +36,7 @@ class Triple
      * @param TripleEntity|null $edge
      * @return Triple
      */
-    public function setEdge(? TripleEntity $edge): Triple
+    public function setEdge(?TripleEntity $edge): Triple
     {
         $this->edge = $edge;
         return $this;
@@ -118,13 +118,5 @@ class Triple
     {
         $this->predicate = $predicate;
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasPredicate(): bool
-    {
-        return !(empty($this->predicate));
     }
 }
