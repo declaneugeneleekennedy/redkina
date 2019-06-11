@@ -5,6 +5,8 @@ jobs:
       - image: php:7-cli-alpine
         environment:
           COMPOSER_ALLOW_SUPERUSER: 1
+          REDIS_URL: localhost
+      - image: redis:alpine
     steps:
       - checkout
       - restore_cache:
