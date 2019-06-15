@@ -142,7 +142,10 @@ class Repository
                     ->using($this->registry->getEntityName(get_class($entity)), $entity->getId())
                     ->asThe($relationshipMetadata->getRole())
                     ->forTripleIn($builder)
-                    ->using($this->registry->getEntityName(get_class($relatedEntity->getEntity())), $relatedEntity->getEntity()->getId())
+                    ->using(
+                        $this->registry->getEntityName(get_class($relatedEntity->getEntity())),
+                        $relatedEntity->getEntity()->getId()
+                    )
                     ->asThe($relationshipMetadata->getRole())
                     ->inverse()
                     ->forTripleIn($builder)
