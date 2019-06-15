@@ -120,10 +120,11 @@ class RepositoryTest extends FactoryTestCase
 
         /**
          * This is a smelly way to make the test pass but also make a small effort to ensure that it won't obscure any
-         * actual errors
+         * actual errors. Because the test deletes the movie it also deletes the relationship between the actor and the
+         * movie, which causes the edge to also be removed. Hence, we expect FM will fail to remove 2 models it stored.
          */
         $this->expectException(DeletingFailedException::class);
-        $this->expectExceptionMessage('We encountered 1 problem while trying to delete the saved models.');
+        $this->expectExceptionMessage('We encountered 2 problems while trying to delete the saved models.');
 
         $this->fm->deleteSaved();
     }

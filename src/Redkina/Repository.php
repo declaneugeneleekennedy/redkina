@@ -123,6 +123,44 @@ class Repository
 
     public function delete(object $entity): bool
     {
+        $entity = $this->load(get_class($entity), $entity->getId());
+        $metadata = $this->registry->getEntityMetadata($this->registry->getEntityName(get_class($entity)));
+
+        foreach ($metadata->getRelationships() as $mapsTo => $relationshipMetadata) {
+            $relatedEntities = $this->getObjectProperty($entity, $mapsTo);
+
+            if (!$relatedEntities) {
+                continue;
+            }
+
+            /** @var RelatedEntity $relatedEntity */
+            foreach ($relatedEntities as $relatedEntity) {
+                $builder = $this->buildTriple();
+
+                $triple = $builder
+                    ->with($relationshipMetadata->getPredicate())
+                    ->using($this->registry->getEntityName(get_class($entity)), $entity->getId())
+                    ->asThe($relationshipMetadata->getRole())
+                    ->forTripleIn($builder)
+                    ->using($this->registry->getEntityName(get_class($relatedEntity->getEntity())), $relatedEntity->getEntity()->getId())
+                    ->asThe($relationshipMetadata->getRole())
+                    ->inverse()
+                    ->forTripleIn($builder)
+                    ->getTriple();
+
+                $edge = $relatedEntity->getEdge();
+
+                if ($edge) {
+                    $triple->setEdge(new TripleEntity(
+                        $this->registry->getEntityName(get_class($edge)),
+                        $edge->getId()
+                    ));
+                }
+
+                $this->manager->deleteTriple($triple);
+            }
+        }
+
         return $this->manager->delete($this->registry->getEntityName(get_class($entity)), $entity->getId());
     }
 

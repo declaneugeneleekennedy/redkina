@@ -6,7 +6,6 @@ use DevDeclan\Redkina\Storage\Triple;
 use DevDeclan\Redkina\Storage\AdapterInterface;
 use DevDeclan\Redkina\Storage\Generator\IdInterface;
 use DevDeclan\Redkina\Storage\Generator\KeyInterface;
-use DevDeclan\Redkina\Storage\TripleBuilder;
 use DevDeclan\Redkina\Storage\TripleEntity;
 use DevDeclan\Redkina\Storage\TripleSet;
 use DevDeclan\Redkina\Storage\TripleKey;
@@ -66,8 +65,6 @@ class Standard implements ManagerInterface
 
     public function delete(string $entityName, string $id): bool
     {
-        $this->deleteTriples($entityName, $id);
-
         return $this->adapter->delete($this->keyGenerator->generate($entityName, $id));
     }
 
@@ -117,6 +114,26 @@ class Standard implements ManagerInterface
         return $triple;
     }
 
+    public function deleteTriple(Triple $triple): bool
+    {
+        $keys = (new TripleSet($triple))->getKeys();
+
+        $results = [];
+        foreach ($keys as $key) {
+            $results[] = $this->adapter->deleteTriple($key);
+        }
+
+        if ($triple->hasEdge()) {
+            $edge = $triple->getEdge();
+
+            $results[] = $this->adapter->delete(
+                $this->keyGenerator->generate($edge->getName(), $edge->getId())
+            );
+        }
+
+        return !(in_array(false, $results));
+    }
+
     protected function insert(string $entityName, array $data): ?array
     {
         $data['id'] = $this->idGenerator->generate();
@@ -132,37 +149,5 @@ class Standard implements ManagerInterface
         );
 
         return $this->adapter->save($key, $data) ? $data : null;
-    }
-
-    protected function deleteTriples(string $entityName, string $id)
-    {
-        $builder = new TripleBuilder();
-
-        foreach (['subject', 'object'] as $role) {
-            $queryTriple = $builder
-                ->with('*')
-                ->using($entityName, $id)
-                ->asThe($role)
-                ->forTripleIn($builder)
-                ->getTriple();
-
-            $query = (new TripleSet($queryTriple))->getQuery();
-            $keys = $this->adapter->queryTripleStore($query);
-
-            dump($query);
-            dump($keys);
-
-            foreach ($keys as $key) {
-                $this->adapter->deleteTriple($key);
-
-                $edgeKey = $this->adapter->loadEdge($key);
-
-                if ($edgeKey) {
-                    $this->adapter->delete($edgeKey);
-                }
-
-                $this->adapter->delete($key);
-            }
-        }
     }
 }

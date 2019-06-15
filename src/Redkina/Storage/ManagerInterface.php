@@ -9,4 +9,5 @@ interface ManagerInterface
     public function delete(string $entityName, string $id): bool;
     public function loadTriples(Triple $queryTriple): array;
     public function saveTriple(Triple $triple): object;
+    public function deleteTriple(Triple $triple): bool;
 }
