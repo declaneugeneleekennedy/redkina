@@ -60,7 +60,12 @@ class TripleKey
             $char = substr($ordering, $i, 1);
 
             if ($char === 'p') {
-                $parts[] = $this->relationship->getPredicate();
+                $predicate = $this->relationship->getPredicate();
+
+                if ($predicate !== '*') {
+                    $parts[] = $predicate;
+                }
+
                 continue;
             }
 

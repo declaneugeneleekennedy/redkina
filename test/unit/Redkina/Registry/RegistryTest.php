@@ -5,7 +5,7 @@ namespace DevDeclan\Test\Unit\Redkina\Registry;
 use DevDeclan\Redkina\ClassLoader;
 use DevDeclan\Redkina\MetadataExtractor;
 use DevDeclan\Redkina\PropertyMetadataFactory;
-use DevDeclan\Redkina\Registry\Registry;
+use DevDeclan\Redkina\Registry;
 use DevDeclan\Test\Support\Redkina\Entity\Fake;
 use DevDeclan\Test\Support\Redkina\Entity\Person;
 use Doctrine\Common\Annotations\AnnotationReader;

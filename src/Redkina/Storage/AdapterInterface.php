@@ -36,7 +36,9 @@ interface AdapterInterface
      */
     public function saveTripleSet(array $keys): bool;
 
-    public function queryTripleStore(string $hexKey, int $offset = 0, int $size = 10): array;
+    public function queryTripleStore(string $triple, int $offset = 0, int $size = 10): array;
+
+    public function deleteTriple(string $triple): bool;
 
     public function loadEdge(string $key): ?string;
     public function saveEdge(string $key, string $edgeKey): bool;

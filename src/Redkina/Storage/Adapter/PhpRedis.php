@@ -15,7 +15,7 @@ class PhpRedis implements AdapterInterface
     /**
      * @var string
      */
-    const RELATIONSHIP_INDEX = 'relationships';
+    const TRIPLES_INDEX = 'triples';
 
     /**
      * @var Redis
@@ -66,7 +66,7 @@ class PhpRedis implements AdapterInterface
     public function saveTripleSet(array $keys): bool
     {
         return ($this->client->zAdd(
-            self::RELATIONSHIP_INDEX,
+            self::TRIPLES_INDEX,
             0,
             $keys[0],
             0,
@@ -85,12 +85,17 @@ class PhpRedis implements AdapterInterface
     public function queryTripleStore(string $query, ?int $start = null, ?int $size = null): array
     {
         return $this->client->zRangeByLex(
-            self::RELATIONSHIP_INDEX,
+            self::TRIPLES_INDEX,
             "[{$query}",
             "[{$query}\xff",
             $start,
             $size
         );
+    }
+
+    public function deleteTriple(string $triple): bool
+    {
+        return $this->client->zDelete(self::TRIPLES_INDEX, $triple);
     }
 
     public function saveEdge(string $key, string $edgeKey): bool

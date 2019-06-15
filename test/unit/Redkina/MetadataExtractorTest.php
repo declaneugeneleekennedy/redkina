@@ -2,14 +2,13 @@
 
 namespace DevDeclan\Test\Unit\Redkina;
 
-use DevDeclan\Redkina\Metadata\Entity as EntityMetadata;
-use DevDeclan\Redkina\Metadata\Property\Generic;
-use DevDeclan\Redkina\Metadata\Property\Id;
-use DevDeclan\Redkina\Metadata\Property\Integer;
-use DevDeclan\Redkina\Metadata\Property\Timestamp;
+use DevDeclan\Redkina\Metadata;
 use DevDeclan\Redkina\MetadataExtractor;
 use DevDeclan\Redkina\PropertyMetadataFactory;
-use DevDeclan\Test\Support\Redkina\Entity\Person;
+use DevDeclan\Test\Support\Redkina\Entity\ActorMovieEdge;
+use DevDeclan\Test\Support\Redkina\Entity\Fake;
+use DevDeclan\Test\Support\Redkina\Entity\Movie;
+use DevDeclan\Test\Support\Redkina\Entity\Person\Actor;
 use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -30,24 +29,71 @@ class MetadataExtractorTest extends TestCase
     {
         parent::setUp();
 
-        $this->reflected = new ReflectionClass(Person::class);
         $this->extractor = new MetadataExtractor(new AnnotationReader(), new PropertyMetadataFactory());
     }
 
-    public function testHappyPath()
+    /**
+     * @dataProvider happyPathDataProvider
+     *
+     * @param string $className
+     * @param Metadata\Entity $expected
+     * @throws \ReflectionException
+     */
+    public function testHappyPath(string $className, ?Metadata\Entity $expected)
     {
-        $metadata = $this->extractor->extract($this->reflected);
+        $reflected = new ReflectionClass($className);
 
-        $this->assertInstanceOf(EntityMetadata::class, $metadata);
-        $this->assertEquals('Person', $metadata->getName());
-        $this->assertEquals(Person::class, $metadata->getClassName());
+        $this->assertEquals($expected, $this->extractor->extract($reflected));
+    }
 
-        $this->assertInstanceOf(Id::class, $metadata->getProperty('id'));
-        $this->assertInstanceOf(Generic::class, $metadata->getProperty('firstName'));
-        $this->assertInstanceOf(Generic::class, $metadata->getProperty('lastName'));
+    public function happyPathDataProvider()
+    {
+        return [
+            [Actor::class, $this->getExpectedEntityMetadata()],
+            [Movie::class, $this->getExpectedMovieMetadata()],
+            [ActorMovieEdge::class, $this->getExpectedEdgeData()],
+            [Fake::class, null]
+        ];
+    }
 
-        $this->assertInstanceOf(Integer::class, $metadata->getProperty('age'));
-        $this->assertInstanceOf(Timestamp::class, $metadata->getProperty('created'));
-        $this->assertInstanceOf(Timestamp::class, $metadata->getProperty('updated'));
+    protected function getExpectedEntityMetadata()
+    {
+        return (new Metadata\Entity())
+            ->setClassName(Actor::class)
+            ->setName('Actor')
+            ->addProperty('id', new Metadata\Property\Id())
+            ->addProperty('firstName', new Metadata\Property\Generic())
+            ->addProperty('lastName', new Metadata\Property\Generic())
+            ->addProperty('dateOfBirth', new Metadata\Property\Timestamp())
+            ->addRelationship('appearedIn', new Metadata\Relationship(
+                'appeared_in',
+                'subject',
+                'Movie'
+            ));
+    }
+
+    protected function getExpectedMovieMetadata()
+    {
+        return (new Metadata\Entity())
+            ->setClassName(Movie::class)
+            ->setName('Movie')
+            ->addProperty('id', new Metadata\Property\Id())
+            ->addProperty('title', new Metadata\Property\Generic())
+            ->addProperty('runningTime', new Metadata\Property\Integer())
+            ->addProperty('releaseDate', new Metadata\Property\Timestamp())
+            ->addRelationship('actors', new Metadata\Relationship(
+                'appeared_in',
+                'object',
+                'Actor'
+            ));
+    }
+
+    protected function getExpectedEdgeData()
+    {
+        return (new Metadata\Entity())
+            ->setClassName(ActorMovieEdge::class)
+            ->setName('ActorMovieEdge')
+            ->addProperty('id', new Metadata\Property\Id())
+            ->addProperty('character', new Metadata\Property\Generic());
     }
 }

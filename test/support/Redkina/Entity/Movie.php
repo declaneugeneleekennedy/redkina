@@ -48,16 +48,6 @@ class Movie
     protected $actors = [];
 
     /**
-     * @var array
-     * @Redkina\Relationship(
-     *     predicate = "directed",
-     *     role = "object",
-     *     entityType = "Actor"
-     * )
-     */
-    protected $directors = [];
-
-    /**
      * @return string|null
      */
     public function getId(): ?string
@@ -144,24 +134,6 @@ class Movie
     public function setActors(array $actors): Movie
     {
         $this->actors = $actors;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDirectors(): array
-    {
-        return $this->directors;
-    }
-
-    /**
-     * @param array $directors
-     * @return Movie
-     */
-    public function setDirectors(array $directors): Movie
-    {
-        $this->directors = $directors;
         return $this;
     }
 }

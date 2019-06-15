@@ -3,12 +3,7 @@
 
 namespace DevDeclan\Test\Unit\Redkina\Storage\Manager;
 
-use DateTime;
 use DevDeclan\Redkina\Metadata\Entity as EntityMetadata;
-use DevDeclan\Redkina\Metadata\Property\Generic as GenericMetadata;
-use DevDeclan\Redkina\Metadata\Property\Integer as IntegerMetadata;
-use DevDeclan\Redkina\Metadata\Property\Timestamp as TimestampMetadata;
-use DevDeclan\Redkina\RegistryInterface;
 use DevDeclan\Redkina\Storage\AdapterInterface;
 use DevDeclan\Redkina\Storage\Generator\IdInterface;
 use DevDeclan\Redkina\Storage\Generator\Key\Standard as KeyGenerator;

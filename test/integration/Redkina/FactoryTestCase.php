@@ -5,7 +5,7 @@ namespace DevDeclan\Test\Integration\Redkina;
 use DevDeclan\Redkina\ClassLoader;
 use DevDeclan\Redkina\MetadataExtractor;
 use DevDeclan\Redkina\PropertyMetadataFactory;
-use DevDeclan\Redkina\Registry\Registry;
+use DevDeclan\Redkina\Registry;
 use DevDeclan\Redkina\Repository;
 use DevDeclan\Redkina\Storage\Adapter\PhpRedis;
 use DevDeclan\Redkina\Storage\Generator;

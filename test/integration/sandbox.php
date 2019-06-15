@@ -2,22 +2,20 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use DevDeclan\Redkina\ClassLoader;
 use DevDeclan\Redkina\MetadataExtractor;
 use DevDeclan\Redkina\PropertyMetadataFactory;
-use DevDeclan\Redkina\Registry\Registry;
+use DevDeclan\Redkina\Registry;
 use DevDeclan\Redkina\Repository;
 use DevDeclan\Redkina\Storage\Adapter\PhpRedis;
 use DevDeclan\Redkina\Storage\Generator;
 use DevDeclan\Redkina\Storage\Manager\Standard;
-use DevDeclan\Test\Support\Redkina\Factory\RedkinaStore;
-use Doctrine\Common\Annotations\AnnotationReader;
-use League\FactoryMuffin\FactoryMuffin;
 use DevDeclan\Test\Support\Redkina\Entity\Actor;
 use DevDeclan\Test\Support\Redkina\Entity\Movie;
-use DevDeclan\Test\Support\Redkina\Entity\ActorMovieEdge;
-use DevDeclan\Redkina\RelatedEntity;
+use DevDeclan\Test\Support\Redkina\Factory\RedkinaStore;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use League\FactoryMuffin\FactoryMuffin;
 
 AnnotationRegistry::registerLoader('class_exists');
 

@@ -2,13 +2,13 @@
 
 namespace DevDeclan\Test\Integration\Redkina;
 
+use DateTime;
 use DevDeclan\Redkina\RelatedEntity;
 use DevDeclan\Redkina\Repository;
 use DevDeclan\Redkina\Storage\ManagerInterface;
-use DevDeclan\Test\Support\Redkina\Entity\Actor;
 use DevDeclan\Test\Support\Redkina\Entity\ActorMovieEdge;
 use DevDeclan\Test\Support\Redkina\Entity\Movie;
-use DateTime;
+use DevDeclan\Test\Support\Redkina\Entity\Person\Actor;
 use League\FactoryMuffin\Exceptions\DeletingFailedException;
 use Prophecy\Argument;
 
@@ -119,7 +119,7 @@ class RepositoryTest extends FactoryTestCase
         $this->assertEquals($actor, $saved);
 
         /**
-         * This is a smelly way to make the test pass but also make a small effort to ensure that it won't catch any
+         * This is a smelly way to make the test pass but also make a small effort to ensure that it won't obscure any
          * actual errors
          */
         $this->expectException(DeletingFailedException::class);

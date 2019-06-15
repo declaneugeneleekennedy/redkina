@@ -24,14 +24,14 @@ class TripleSet
     /**
      * @var Triple
      */
-    protected $relationship;
+    protected $triple;
 
     /**
-     * @param Triple $relationship
+     * @param Triple $triple
      */
-    public function __construct(Triple $relationship)
+    public function __construct(Triple $triple)
     {
-        $this->relationship = $relationship;
+        $this->triple = $triple;
     }
 
     /**
@@ -39,7 +39,7 @@ class TripleSet
      */
     public function getKeys()
     {
-        $hexKey = new TripleKey($this->relationship);
+        $hexKey = new TripleKey($this->triple);
 
         $keys = [];
 
@@ -60,7 +60,7 @@ class TripleSet
             $ordering = $this->guessOrdering();
         }
 
-        return (new TripleKey($this->relationship))->format($ordering);
+        return (new TripleKey($this->triple))->format($ordering);
     }
 
     /**
@@ -77,23 +77,23 @@ class TripleSet
      */
     protected function guessOrdering()
     {
-        if (($this->relationship->hasSubject() && $this->relationship->getSubject()->getId()) &&
-            ($this->relationship->hasObject() && $this->relationship->getObject()->getId())
+        if (($this->triple->hasSubject() && $this->triple->getSubject()->getId()) &&
+            ($this->triple->hasObject() && $this->triple->getObject()->getId())
         ) {
             throw new InvalidArgumentException(
                 'Impossible to guess ordering of query as the provided triple is already complete'
             );
         }
 
-        if (($this->relationship->hasSubject() && !$this->relationship->getSubject()->getId()) &&
-            ($this->relationship->hasObject() && !$this->relationship->getObject()->getId())
+        if (($this->triple->hasSubject() && !$this->triple->getSubject()->getId()) &&
+            ($this->triple->hasObject() && !$this->triple->getObject()->getId())
         ) {
             throw new InvalidArgumentException(
                 'Neither the object nor the subject has an ID so there is nothing to relate them to'
             );
         }
 
-        if ($this->relationship->hasSubject() && $this->relationship->getSubject()->getId()) {
+        if ($this->triple->hasSubject() && $this->triple->getSubject()->getId()) {
             return 'spo';
         }
 

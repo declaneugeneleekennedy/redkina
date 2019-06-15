@@ -39,7 +39,7 @@ class PhpRedisTest extends TestCase
         $phpRedis = $this->prophesize(Redis::class);
 
         $phpRedis->zAdd(
-            'relationships',
+            'triples',
             0,
             'spo:Foo.11:is_nemesis_of:Bar.22',
             0,
@@ -76,7 +76,7 @@ class PhpRedisTest extends TestCase
         $phpRedis = $this->prophesize(Redis::class);
 
         $phpRedis
-            ->zRangeByLex('relationships', "[spo:Foo.11:is_nemesis_of:", "[spo:Foo.11:is_nemesis_of:\xff", null, null)
+            ->zRangeByLex('triples', "[spo:Foo.11:is_nemesis_of:", "[spo:Foo.11:is_nemesis_of:\xff", null, null)
             ->willReturn(['spo:Foo.11:is_nemesis_of:Bar.22']);
 
         $redis = new PhpRedis($phpRedis->reveal());

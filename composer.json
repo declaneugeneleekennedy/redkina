@@ -20,7 +20,8 @@
     "psr-4": {
       "DevDeclan\\Test\\Integration\\Redkina\\": "./test/integration/Redkina",
       "DevDeclan\\Test\\Support\\Redkina\\": "./test/support/Redkina",
-      "DevDeclan\\Test\\Unit\\Redkina\\": "./test/unit/Redkina"
+      "DevDeclan\\Test\\Unit\\Redkina\\": "./test/unit/Redkina",
+      "DevDeclan\\Benchmark\\Redkina\\": "./benchmarks/Redkina"
     }
   },
   "require": {

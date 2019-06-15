@@ -1,15 +1,12 @@
 <?php
 
-namespace DevDeclan\Redkina\Registry;
+namespace DevDeclan\Redkina;
 
-use DevDeclan\Redkina\ClassLoader;
-use DevDeclan\Redkina\Metadata\Entity as EntityMetadata;
-use DevDeclan\Redkina\MetadataExtractor;
-use DevDeclan\Redkina\RegistryInterface;
+use DevDeclan\Redkina\Metadata\Entity;
 use ReflectionClass;
 use ReflectionException;
 
-class Registry implements RegistryInterface
+class Registry
 {
     /**
      * @var ClassLoader
@@ -63,10 +60,10 @@ class Registry implements RegistryInterface
 
     /**
      * @param  string         $entityName
-     * @param  EntityMetadata $metadata
+     * @param  Entity $metadata
      * @return Registry
      */
-    public function registerEntity(string $entityName, EntityMetadata $metadata): self
+    public function registerEntity(string $entityName, Entity $metadata): self
     {
         $this->entities[$entityName] = $metadata;
 
@@ -75,10 +72,10 @@ class Registry implements RegistryInterface
 
     /**
      * @param  string         $className
-     * @param  EntityMetadata $metadata
+     * @param  Entity $metadata
      * @return Registry
      */
-    public function registerClass(string $className, EntityMetadata $metadata): self
+    public function registerClass(string $className, Entity $metadata): self
     {
         $this->classes[$className] = $metadata;
 
@@ -87,18 +84,18 @@ class Registry implements RegistryInterface
 
     /**
      * @param string $className
-     * @return EntityMetadata|null
+     * @return Entity|null
      */
-    public function getClassMetadata(string $className): ?EntityMetadata
+    public function getClassMetadata(string $className): ?Entity
     {
         return $this->classes[$className] ?? null;
     }
 
     /**
      * @param string $entityName
-     * @return EntityMetadata|null
+     * @return Entity|null
      */
-    public function getEntityMetadata(string $entityName): ?EntityMetadata
+    public function getEntityMetadata(string $entityName): ?Entity
     {
         return $this->entities[$entityName] ?? null;
     }

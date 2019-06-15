@@ -39,25 +39,10 @@ class Person
     protected $lastName;
 
     /**
-     * @var int
-     *
-     * @Redkina\Property\Integer()
-     */
-    protected $age;
-
-    /**
      * @var DateTime
-     *
      * @Redkina\Property\Timestamp()
      */
-    protected $created;
-
-    /**
-     * @var DateTime
-     *
-     * @Redkina\Property\Timestamp()
-     */
-    protected $updated;
+    protected $dateOfBirth;
 
     /**
      * @var string|null
@@ -65,6 +50,25 @@ class Person
      * @NotRedkina\Fake()
      */
     protected $ignored;
+
+    /**
+     * @return string|null
+     */
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     * @return Person
+     */
+    public function setId(string $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * @return string
@@ -105,36 +109,18 @@ class Person
     /**
      * @return DateTime
      */
-    public function getCreated(): DateTime
+    public function getDateOfBirth(): DateTime
     {
-        return $this->created;
+        return $this->dateOfBirth;
     }
 
     /**
-     * @param  DateTime $created
+     * @param DateTime $dateOfBirth
      * @return Person
      */
-    public function setCreated(DateTime $created): self
+    public function setDateOfBirth(DateTime $dateOfBirth): Person
     {
-        $this->created = $created;
-        return $this;
-    }
-
-    /**
-     * @return DateTime
-     */
-    public function getUpdated(): DateTime
-    {
-        return $this->updated;
-    }
-
-    /**
-     * @param  DateTime $updated
-     * @return Person
-     */
-    public function setUpdated(DateTime $updated): self
-    {
-        $this->updated = $updated;
+        $this->dateOfBirth = $dateOfBirth;
         return $this;
     }
 }

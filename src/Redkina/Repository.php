@@ -5,6 +5,7 @@ namespace DevDeclan\Redkina;
 use DevDeclan\Redkina\Metadata\Relationship;
 use DevDeclan\Redkina\Storage\ManagerInterface;
 use DevDeclan\Redkina\Storage\Triple;
+use DevDeclan\Redkina\Storage\TripleBuilder;
 use DevDeclan\Redkina\Storage\TripleEntity;
 use DevDeclan\Redkina\Storage\SerializerInterface;
 use DevDeclan\Redkina\Storage\UnserializerInterface;
@@ -12,7 +13,7 @@ use DevDeclan\Redkina\Storage\UnserializerInterface;
 class Repository
 {
     /**
-     * @var RegistryInterface
+     * @var Registry
      */
     protected $registry;
 
@@ -31,7 +32,7 @@ class Repository
      */
     protected $unserializers = [];
 
-    public function __construct(RegistryInterface $registry, ManagerInterface $manager)
+    public function __construct(Registry $registry, ManagerInterface $manager)
     {
         $this->registry = $registry;
         $this->manager = $manager;
@@ -131,31 +132,24 @@ class Repository
         string $role,
         ?string $entityType = null
     ): array {
-        $isSubjectQuery = ($role === Relationship::ROLE_SUBJECT);
+        $builder = $this->buildTriple();
 
-        $queryTripleEntity = new TripleEntity(
-            $this->registry->getEntityName(get_class($entity)),
-            $entity->getId()
-        );
+        $builder
+            ->with($predicate)
+            ->using($this->registry->getEntityName(get_class($entity)), $entity->getId())
+            ->asThe($role)
+            ->forTripleIn($builder);
 
-        $query = (new Triple())->setPredicate($predicate);
-
-        if ($isSubjectQuery) {
-            $query->setSubject($queryTripleEntity);
-        } else {
-            $query->setObject($queryTripleEntity);
-        }
-
-        if (!is_null($entityType)) {
-            if ($isSubjectQuery) {
-                $query->setObject(new TripleEntity($entityType));
-            } else {
-                $query->setSubject(new TripleEntity($entityType));
-            }
+        if ($entityType) {
+            $builder
+                ->using($entityType)
+                ->asThe($role)
+                ->inverse()
+                ->forTripleIn($builder);
         }
 
         /** @var Triple[] $relationships */
-        $relationships = $this->manager->loadRelationships($query);
+        $relationships = $this->manager->loadTriples($builder->getTriple());
 
         $results = [];
 
@@ -232,7 +226,7 @@ class Repository
             $relationship->setEdge($edge);
         }
 
-        return $this->manager->saveRelationship($relationship);
+        return $this->manager->saveTriple($relationship);
     }
 
     protected function setObjectProperty(object $entity, string $name, $value): object
@@ -263,5 +257,10 @@ class Repository
         }
 
         return $this->unserializers[$className]->unserialize($value);
+    }
+
+    protected function buildTriple(): TripleBuilder
+    {
+        return new TripleBuilder();
     }
 }
