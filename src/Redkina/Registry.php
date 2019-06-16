@@ -121,4 +121,12 @@ class Registry
 
         return $metadata ? $metadata->getName() : null;
     }
+
+    /**
+     * @return Entity[]
+     */
+    public function getEntities(): array
+    {
+        return $this->entities;
+    }
 }
